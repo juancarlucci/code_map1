@@ -537,7 +537,7 @@
     });
     // Initialize the list
     buildLocationList(buildings);
-  });
+  }); //end map.onLoad
   
 
   map.on('click', function(e) {
@@ -592,7 +592,7 @@
             + '<h4>KWH Savings</h4>' + 
             '<h4>' + currentFeature.properties.kwhSavings + '</h4>')
           .addTo(map);
-  }
+  } //end createPopup
  
   function buildLocationList(data) {
     for (i = 0; i < data.features.length; i++) {
@@ -645,7 +645,7 @@
 
       });
     }
-  }
+  } //end buildLocationList
   
 
 

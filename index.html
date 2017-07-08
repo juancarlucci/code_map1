@@ -8,12 +8,20 @@
       <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700' rel='stylesheet'>
       <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.33.1/mapbox-gl.js'></script>
       <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.33.1/mapbox-gl.css' rel='stylesheet' />
+      <script src="https://d3js.org/d3.v4.min.js"></script>
       <script type="text/javascript" src="js/leaflet.js"></script>
       <script type="text/javascript" src="js/jquery.js"></script>
+      <script src="js/leaflet-search.min.js"></script>
       <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.2.0/leaflet-omnivore.min.js'></script>
       <link rel="stylesheet" href="css/style.css">
-        <link rel="stylesheet" href="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.css">
-    <script src="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
+
+      <script type="text/javascript" src="js/Chart.bundle.min.js"></script>
+      <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.min.js"> -->
+
+
+        <!-- <link rel="stylesheet" href="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.css"> -->
+    <!-- <script src="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script> -->
+    <link rel="stylesheet" href="css/leaflet-search.min.css">
       
       <style>
       .btn-control {
@@ -36,8 +44,33 @@
       .btn-control:hover {
           background-color: #4ea0da;
       }
-       
+
+      .filter-ctrl {
+          position: absolute;
+          top: 10px;
+          right: 10px;
+          z-index: 1;
+          width: 180px;
+      }
+
+      .filter-ctrl input[type=text] {
+          font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+          width: 100%;
+          border: 0;
+          background-color: #fff;
+          height: 40px;
+          margin: 0;
+          color: rgba(0,0,0,.5);
+          padding: 10px;
+          box-shadow: 0 0 0 2px rgba(0,0,0,0.1);
+          border-radius: 3px;
+      .myChart  {
+          position: absolute;
+          top: 5px;
+          z-index: 100000;
+       }
       </style>
+      
   </head>
   
   <body>
@@ -62,29 +95,22 @@
         <!-- <button id='zoomto' class='btn-control'>Zoom to bounds</button> -->
       </div>
       <!-- <input id='search' class='search-ui' placeholder='Seach for buildings...' /> -->
+    <div class="chart-container">
+      <canvas id="myChart"></canvas>
+    </div>
+
 
     <div id='listings' class='listings'></div>
     </div>
 
+   
+
     <div id='map' class='map'> </div>
-    <nav id='menu' class='menu'></nav>
+   <!--  <div class='filter-ctrl'>
+        <input id='filter-input' type='text' name='filter' placeholder='Filter by name' />
+    </div> -->
 
     <!-- <button id='zoomto' class='btn-control'>Zoom to bounds</button> -->
-
-    <!-- <div id='menu' class='menu'>
-        <input id='basic' type='radio' name='rtoggle' value='basic' checked='checked'>
-        <label for='basic'>basic</label>
-        <input id='streets' type='radio' name='rtoggle' value='streets'>
-        <label for='streets'>streets</label>
-        <input id='bright' type='radio' name='rtoggle' value='bright'>
-        <label for='bright'>bright</label>
-        <input id='light' type='radio' name='rtoggle' value='light'>
-        <label for='light'>light</label>
-        <input id='dark' type='radio' name='rtoggle' value='dark'>
-        <label for='dark'>dark</label>
-        <input id='satellite' type='radio' name='rtoggle' value='satellite'>
-        <label for='satellite'>satellite</label>
-    </div> -->
     
   <script>
   // This will let you use the .remove() function later on
@@ -95,7 +121,7 @@
       }
     };
   }
-  [,,,,,]
+  
 
   var colorList = [
       [1.614, '#edf8fb'],
@@ -107,6 +133,15 @@
   ];
 
   mapboxgl.accessToken = 'pk.eyJ1IjoianVhbmNhcmx1Y2NpIiwiYSI6ImNpdzZzcGgwZTAwMWUydHRjaXdnZ29yY3IifQ.OP_E0DFK0JcIb_CT81veqg';
+
+
+//FILTER
+var layerIDs = []; // Will contain a list used to filter against.
+var filterInput = document.getElementById('filter-input');
+
+
+
+
 
   // This adds the map
   var map = new mapboxgl.Map({
@@ -125,43 +160,286 @@
 
   // var filters = document.getElementById('filters');
 
+    var buildings = {
+    "type": "FeatureCollection",
+    "features": [
+      {
+        "type": "Feature", "id": 1,
+        "properties": {
+          "id": 1,
+          "name": "Discount",
+          "type": "Retail and wholesale store",
+          "address": "2505 North Texas St.",
+          "city": "Fairfield",
+          "state": "ca",
+          "zip": 94533,
+          "fulladdress": "2505 North Texas St. Fairfield, 94533",
+          "lat": 41.85, 
+          "lon": -87.65,
+          "lpd": 4054.817782,
+          "skylit": 0,
+          "autoOff": 0,
+          "kwhDesign": 70.9495157,
+          "kwhTarget": 68.04238912,
+          "kwhSavings": 2.907126588,
+          "areaControl": 0,
+          "powerAdjust": 0,
+          "partOffOccSens": 0,
+          "primarySidelit": 0,
+          "secondarySidelit": 0,
+          "2005": 85, "2006": 38, "2007": 75, "2008": 30, "2009": 9, "2010": 15, "2011": 38 
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -122.021467,
+            38.27526
+          ]
+        }
+      },
+      {
+        "type": "Feature", "id": 2,
+        "properties": {
+           "id": 2,
+          "name": "Chiropractic",
+          "type": "All other",
+          "address": "210 Peabody Rd",
+          "city": "Vacaville",
+          "state": "ca",
+          "zip": 95687,
+          "fulladdress": "210 Peabody Rd Vacaville, 95687",
+          "lat": 41.85, 
+          "lon": -87.65,
+          "lpd": 0,
+          "skylit": 0,
+          "autoOff": 0,
+          "kwhDesign": 62.73715663,
+          "kwhTarget": 52.16680172,
+          "kwhSavings": 10.57035492,
+          "areaControl": 0,
+          "powerAdjust": 12192.20096,
+          "partOffOccSens": 0,
+          "primarySidelit": 0,
+          "secondarySidelit": 0,
+          "2005": 28, "2006": 29, "2007": 38, "2008": 26, "2009": 15, "2010": 12, "2011": 10 
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -121.9766822,
+            38.3501089
+          ]
+        }
+      },
+      {
+        "type": "Feature", "id": 3,
+        "properties": {
+           "id": 3,
+          "name": "Dental",
+          "type": "Medical buildings and clinic",
+          "address": "665 Elmira Rd",
+          "city": "Vacaville",
+          "state": "ca",
+          "zip": 95688,
+          "fulladdress": "671 Elmira Rd Vacaville, 95688",
+          "lat": 41.85, 
+          "lon": -87.65,
+          "lpd": 349.6360884,
+          "skylit": 0,
+          "autoOff": 75.520017,
+          "kwhDesign": 7.621488691,
+          "kwhTarget": 6.131341236,
+          "kwhSavings": 1.490147454,
+          "areaControl": 0,
+          "powerAdjust": 1116.446772,
+          "partOffOccSens": 330.13211,
+          "primarySidelit": 0,
+          "secondarySidelit": 0,
+          "2005": 18, "2006": 59, "2007": 22, "2008": 60, "2009": 82, "2010": 42, "2011": 18
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -121.9497941,
+            38.3517194
+          ]
+        }
+      },
+      {
+        "type": "Feature", "id": 4,
+        "properties": {
+           "id": 4,
+          "name": "Vet ",
+          "type": "All other",
+          "address": "215 Dobbins",
+          "city": "Vacaville",
+          "state": "ca",
+          "zip": 95688,
+          "fulladdress": "218 Dobbins Vacaville, 95688",
+          "lat": 41.85, 
+          "lon": -87.65,
+          "lpd": 2956.19155,
+          "skylit": 0,
+          "autoOff": 4347.67746,
+          "kwhDesign": 23.62406249,
+          "kwhTarget": 17.30257364,
+          "kwhSavings": 6.321488848,
+          "areaControl": 0,
+          "powerAdjust": 541.134915,
+          "partOffOccSens": 0,
+          "primarySidelit": 301.6544181,
+          "secondarySidelit": 216.331149,
+          "2005": 35, "2006": 45, "2007": 31, "2008": 26, "2009": 14, "2010": 9, "2011": 15 
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -121.9890381,
+            38.3572342
+          ]
+        }
+      },
+      {
+        "type": "Feature", "id": 5,
+        "properties": {
+           "id": 5,
+          "name": "Fitness",
+          "type": "All other",
+          "address": "2565 N Texas St,",
+          "city": "Fairfield",
+          "state": "ca",
+          "zip": 94533,
+          "fulladdress": "2525 N Texas St, Fairfield, 94533",
+          "lat": 41.85, 
+          "lon": -87.65,
+          "lpd": 0,
+          "skylit": 0,
+          "autoOff": 7428.669638,
+          "kwhDesign": 52.44833839,
+          "kwhTarget": 35.19144456,
+          "kwhSavings": 17.25689383,
+          "areaControl": 0,
+          "powerAdjust": 11402.1428,
+          "partOffOccSens": 0,
+          "primarySidelit": 0,
+          "secondarySidelit": 49.85136,
+          "2005": 12, "2006": 31, "2007": 15, "2008": 22, "2009": 28, "2010": 38, "2011": 31
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -122.0359703,
+            38.2749076
+          ]
+        }
+      },
+      {
+        "type": "Feature", "id": 6,
+        "properties": {
+           "id": 6,
+          "name": "Avenue",
+          "type": "Retail and wholesale store",
+          "address": "1635 E Monte Vista Ave",
+          "city": "Vacaville",
+          "state": "ca",
+          "zip": 95688,
+          "fulladdress": "1680 E Monte Vista Ave Vacaville, 95688",
+          "lat": 41.85, 
+          "lon": -87.65,
+          "lpd": 0,
+          "skylit": 17989.24025,
+          "autoOff": 0,
+          "kwhDesign": 78.37253312,
+          "kwhTarget": 67.20509021,
+          "kwhSavings": 11.1674429,
+          "areaControl": 28.664532,
+          "powerAdjust": 353.161734,
+          "partOffOccSens": 0,
+          "primarySidelit": 0,
+          "secondarySidelit": 0,
+          "2005": 25, "2006": 50, "2007": 25, "2008": 25, "2009": 25, "2010": 25, "2011": 100
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -121.9591074,
+            38.3698599
+          ]
+        }
+      },
+      {
+        "type": "Feature", "id": 7,
+        "properties": {
+           "id": 7,
+          "name": "Final",
+          "type": "Grocery store",
+          "address": "2585 N Texas St ",
+          "city": "Fairfield",
+          "state": "ca",
+          "zip": 94533,
+          "fulladdress": "2525 N Texas St  Fairfield, 94533",
+          "lat": 41.85, 
+          "lon": -87.65,
+          "lpd": 0,
+          "skylit": 0,
+          "autoOff": 0,
+          "kwhDesign": 70.48373809,
+          "kwhTarget": 68.97552769,
+          "kwhSavings": 1.508210399,
+          "areaControl": 0,
+          "powerAdjust": 1101.25702,
+          "partOffOccSens": 142.09768,
+          "primarySidelit": 446.3378807,
+          "secondarySidelit": 258.5681516,
+          "2005": 88, "2006": 46, "2007": 56, "2008": 15, "2009": 12, "2010": 25, "2011": 46
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -122.0459703,
+            38.2749076
+          ]
+        }
+      },
+      {
+        "type": "Feature", "id": 8,
+        "properties": {
+           "id": 8,
+          "name": "Smiles",
+          "type": "Medical buildings and clinic",
+          "address": "2501 Nut Tree Rd",
+          "city": "Vacaville",
+          "state": "ca",
+          "zip": 95687,
+          "fulladdress": "2501 Nut Tree Rd Vacaville, 95687",
+          "lat": 41.85, 
+          "lon": -87.65,
+          "lpd": 0,
+          "skylit": 0,
+          "autoOff": 1473.65094,
+          "kwhDesign": 8.57486,
+          "kwhTarget": 5.538512013,
+          "kwhSavings": 3.036347987,
+          "areaControl": 0,
+          "powerAdjust": 1481.00082,
+          "partOffOccSens": 379.7438,
+          "primarySidelit": 113.5573935,
+          "secondarySidelit": 0,
+          "2005": 52, "2006": 51, "2007": 46, "2008": 68, "2009": 75, "2010": 85, "2011": 96
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -121.9537155,
+            38.3350313
+          ]
+        }
+      }
+    ]
+  };
 
-
-  // var layerList = document.getElementById('menu');
-  // var inputs = layerList.getElementsByTagName('input');
-
-  // function switchLayer(layer) {
-  //     var layerId = layer.target.id;
-  //     map.setStyle('mapbox://styles/mapbox/' + layerId + '-v9').style.zIndex = 0;
-  //     addDataLayer();
-  //     // map.createPane("pane250").style.zIndex = 250;
-  // }
-
-  // for (var i = 0; i < inputs.length; i++) {
-  //     inputs[i].onclick = switchLayer;
-  // }
-
-  // map.on('style.load', function () {
-  //   // Triggered when `setStyle` is called.
-  //   addDataLayer();
-  // });
-
-
-  var baseLayers = [{
-    label: 'Streets',
-    id: 'streets-v8'
-  }, {
-    label: 'Light',
-    id: 'light-v8'
-  }, {
-    label: 'Dark',
-    id: 'dark-v8'
-  }];
-
-  var menu = document.getElementById('menu');
-  var geojson;
-
-  function addDataLayer() {
+   map.on('load', function(e) {
+   // Add the data to your map as a layer
     map.addLayer({
       id: 'locations',
       type: 'circle',
@@ -202,402 +480,7 @@
         }
 
     });
-  }
-
-  map.on('style.load', function () {
-    // Triggered when `setStyle` is called.
-    if (geojson) addDataLayer();
-  });
-
-  // map.on('load', function () {
-
-  //   // Make an ajax request to the external source
-  //   d3.json('https://d2ad6b4ur7yvpq.cloudfront.net/naturalearth-3.3.0/ne_50m_urban_areas.geojson', function(err, data) {
-  //     if (err) return console.log(err);
-  //     geojson = data;
-  //     addDataLayer();
-  //   });
-
-  //   baseLayers.forEach(function(l) {
-  //     var button = document.createElement('button'); 
-  //     button.textContent = l.label;
-  //     button.addEventListener('click', function() {
-  //       map.setStyle('mapbox://styles/mapbox/' + l.id); 
-  //     });
-
-  //     menu.appendChild(button);
-  //   });
-  // });
-
-
-
-
-
-
-
-  var buildings = {
-  "type": "FeatureCollection",
-  "features": [
-    {
-      "type": "Feature", "id": 1,
-      "properties": {
-        "id": 1,
-        "name": "Discount",
-        "type": "Retail and wholesale store",
-        "address": "2505 North Texas St.",
-        "city": "Fairfield",
-        "state": "ca",
-        "zip": 94533,
-        "fulladdress": "2505 North Texas St. Fairfield, 94533",
-        "lat": 41.85, 
-        "lon": -87.65,
-        "lpd": 4054.817782,
-        "skylit": 0,
-        "autoOff": 0,
-        "kwhDesign": 70.9495157,
-        "kwhTarget": 68.04238912,
-        "kwhSavings": 2.907126588,
-        "areaControl": 0,
-        "powerAdjust": 0,
-        "partOffOccSens": 0,
-        "primarySidelit": 0,
-        "secondarySidelit": 0,
-        "2005": 85, "2006": 38, "2007": 75, "2008": 30, "2009": 9, "2010": 15, "2011": 38 
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -122.021467,
-          38.27526
-        ]
-      }
-    },
-    {
-      "type": "Feature", "id": 2,
-      "properties": {
-         "id": 2,
-        "name": "Chiropractic",
-        "type": "All other",
-        "address": "210 Peabody Rd",
-        "city": "Vacaville",
-        "state": "ca",
-        "zip": 95687,
-        "fulladdress": "210 Peabody Rd Vacaville, 95687",
-        "lat": 41.85, 
-        "lon": -87.65,
-        "lpd": 0,
-        "skylit": 0,
-        "autoOff": 0,
-        "kwhDesign": 62.73715663,
-        "kwhTarget": 52.16680172,
-        "kwhSavings": 10.57035492,
-        "areaControl": 0,
-        "powerAdjust": 12192.20096,
-        "partOffOccSens": 0,
-        "primarySidelit": 0,
-        "secondarySidelit": 0,
-        "2005": 28, "2006": 29, "2007": 38, "2008": 26, "2009": 15, "2010": 12, "2011": 10 
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -121.9766822,
-          38.3501089
-        ]
-      }
-    },
-    {
-      "type": "Feature", "id": 3,
-      "properties": {
-         "id": 3,
-        "name": "Dental",
-        "type": "Medical buildings and clinic",
-        "address": "665 Elmira Rd",
-        "city": "Vacaville",
-        "state": "ca",
-        "zip": 95688,
-        "fulladdress": "671 Elmira Rd Vacaville, 95688",
-        "lat": 41.85, 
-        "lon": -87.65,
-        "lpd": 349.6360884,
-        "skylit": 0,
-        "autoOff": 75.520017,
-        "kwhDesign": 7.621488691,
-        "kwhTarget": 6.131341236,
-        "kwhSavings": 1.490147454,
-        "areaControl": 0,
-        "powerAdjust": 1116.446772,
-        "partOffOccSens": 330.13211,
-        "primarySidelit": 0,
-        "secondarySidelit": 0,
-        "2005": 18, "2006": 59, "2007": 22, "2008": 60, "2009": 82, "2010": 42, "2011": 18
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -121.9497941,
-          38.3517194
-        ]
-      }
-    },
-    {
-      "type": "Feature", "id": 4,
-      "properties": {
-         "id": 4,
-        "name": "Vet ",
-        "type": "All other",
-        "address": "215 Dobbins",
-        "city": "Vacaville",
-        "state": "ca",
-        "zip": 95688,
-        "fulladdress": "218 Dobbins Vacaville, 95688",
-        "lat": 41.85, 
-        "lon": -87.65,
-        "lpd": 2956.19155,
-        "skylit": 0,
-        "autoOff": 4347.67746,
-        "kwhDesign": 23.62406249,
-        "kwhTarget": 17.30257364,
-        "kwhSavings": 6.321488848,
-        "areaControl": 0,
-        "powerAdjust": 541.134915,
-        "partOffOccSens": 0,
-        "primarySidelit": 301.6544181,
-        "secondarySidelit": 216.331149,
-        "2005": 35, "2006": 45, "2007": 31, "2008": 26, "2009": 14, "2010": 9, "2011": 15 
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -121.9890381,
-          38.3572342
-        ]
-      }
-    },
-    {
-      "type": "Feature", "id": 5,
-      "properties": {
-         "id": 5,
-        "name": "Fitness",
-        "type": "All other",
-        "address": "2565 N Texas St,",
-        "city": "Fairfield",
-        "state": "ca",
-        "zip": 94533,
-        "fulladdress": "2525 N Texas St, Fairfield, 94533",
-        "lat": 41.85, 
-        "lon": -87.65,
-        "lpd": 0,
-        "skylit": 0,
-        "autoOff": 7428.669638,
-        "kwhDesign": 52.44833839,
-        "kwhTarget": 35.19144456,
-        "kwhSavings": 17.25689383,
-        "areaControl": 0,
-        "powerAdjust": 11402.1428,
-        "partOffOccSens": 0,
-        "primarySidelit": 0,
-        "secondarySidelit": 49.85136,
-        "2005": 12, "2006": 31, "2007": 15, "2008": 22, "2009": 28, "2010": 38, "2011": 31
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -122.0359703,
-          38.2749076
-        ]
-      }
-    },
-    {
-      "type": "Feature", "id": 6,
-      "properties": {
-         "id": 6,
-        "name": "Avenue",
-        "type": "Retail and wholesale store",
-        "address": "1635 E Monte Vista Ave",
-        "city": "Vacaville",
-        "state": "ca",
-        "zip": 95688,
-        "fulladdress": "1680 E Monte Vista Ave Vacaville, 95688",
-        "lat": 41.85, 
-        "lon": -87.65,
-        "lpd": 0,
-        "skylit": 17989.24025,
-        "autoOff": 0,
-        "kwhDesign": 78.37253312,
-        "kwhTarget": 67.20509021,
-        "kwhSavings": 11.1674429,
-        "areaControl": 28.664532,
-        "powerAdjust": 353.161734,
-        "partOffOccSens": 0,
-        "primarySidelit": 0,
-        "secondarySidelit": 0,
-        "2005": 25, "2006": 50, "2007": 25, "2008": 25, "2009": 25, "2010": 25, "2011": 100
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -121.9591074,
-          38.3698599
-        ]
-      }
-    },
-    {
-      "type": "Feature", "id": 7,
-      "properties": {
-         "id": 7,
-        "name": "Final",
-        "type": "Grocery store",
-        "address": "2585 N Texas St ",
-        "city": "Fairfield",
-        "state": "ca",
-        "zip": 94533,
-        "fulladdress": "2525 N Texas St  Fairfield, 94533",
-        "lat": 41.85, 
-        "lon": -87.65,
-        "lpd": 0,
-        "skylit": 0,
-        "autoOff": 0,
-        "kwhDesign": 70.48373809,
-        "kwhTarget": 68.97552769,
-        "kwhSavings": 1.508210399,
-        "areaControl": 0,
-        "powerAdjust": 1101.25702,
-        "partOffOccSens": 142.09768,
-        "primarySidelit": 446.3378807,
-        "secondarySidelit": 258.5681516,
-        "2005": 88, "2006": 46, "2007": 56, "2008": 15, "2009": 12, "2010": 25, "2011": 46
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -122.0459703,
-          38.2749076
-        ]
-      }
-    },
-    {
-      "type": "Feature", "id": 8,
-      "properties": {
-         "id": 8,
-        "name": "Smiles",
-        "type": "Medical buildings and clinic",
-        "address": "2501 Nut Tree Rd",
-        "city": "Vacaville",
-        "state": "ca",
-        "zip": 95687,
-        "fulladdress": "2501 Nut Tree Rd Vacaville, 95687",
-        "lat": 41.85, 
-        "lon": -87.65,
-        "lpd": 0,
-        "skylit": 0,
-        "autoOff": 1473.65094,
-        "kwhDesign": 8.57486,
-        "kwhTarget": 5.538512013,
-        "kwhSavings": 3.036347987,
-        "areaControl": 0,
-        "powerAdjust": 1481.00082,
-        "partOffOccSens": 379.7438,
-        "primarySidelit": 113.5573935,
-        "secondarySidelit": 0,
-        "2005": 52, "2006": 51, "2007": 46, "2008": 68, "2009": 75, "2010": 85, "2011": 96
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -121.9537155,
-          38.3350313
-        ]
-      }
-    }
-  ]
-};
-
-  // This adds the data to the map
-  // map.on('load', function (e) {
-  //   // This is where your '.addLayer()' used to be, instead add only the source without styling a layer
-  //   map.addSource("places", {
-  //     "type": "geojson",
-  //     "data": buildings
-  //   });
-  //   // Initialize the list
-  //   buildLocationList(buildings);
- 
-  // });
-  // Building an array of circle-color ramps for data-driven styles
-  // var colorList = [
-  //     [1.614, '#edf8fb'],
-  //     [4.132, '#ccece6'],
-  //     [8.056, '#99d8c9'],
-  //     [13.919, '#66c2a4'],
-  //     [20.464, '#41ae76'],
-  //     [34.615, '#238b45']
-  // ];
- 
-
-    map.on('load', function(e) {
-
-    // function addDataLayer() {
-    // Add the data to map as a layer
-    // map.addLayer({
-    //   id: 'locations',
-    //   type: 'circle',
-    //   // Add a GeoJSON source containing place coordinates and information.
-    //   source: {
-    //     type: 'geojson',
-    //     data: buildings
-    //   },
-    //   // layout: {
-    //   //   'icon-image': 'restaurant-15',
-    //   //   'icon-allow-overlap': true,
-    //   // },
-    //   paint : {
-    //       'circle-color' : {
-    //         property: 'kwhSavings',
-    //         type: 'interval',
-    //         stops: colorList
-    //     },
-    //       'circle-stroke-color': '#238b45',
-    //       'circle-stroke-width' : 2,
-    //       // "circle-opacity": 1,
-    //       'circle-radius' : {
-    //         property: 'kwhSavings',
-    //         type: 'exponential',
-    //         stops:  [
-    //         [{ "zoom": 15, "value": 1 }, 10],
-    //         [{ "zoom": 15, "value": 10 }, 50],
-    //         [{ "zoom": 15, "value": 100 }, 100],
-    //         [{ "zoom": 17, "value": 1 }, 20],
-    //         [{ "zoom": 17, "value": 10 }, 60],
-    //         [{ "zoom": 17, "value": 100 }, 110],
-    //         [{ "zoom": 20, "value": 1 }, 30],
-    //         [{ "zoom": 20, "value": 10 }, 70],
-    //         [{ "zoom": 20, "value": 100 }, 120]
-    //     ]
-    //     },
-    //       'circle-opacity' : 0.8
-    //     }
-
-    // });
-    // Make an ajax request to the external source
-    // d3.json('https://d2ad6b4ur7yvpq.cloudfront.net/naturalearth-3.3.0/ne_50m_urban_areas.geojson', function(err, data) {
-    //   if (err) return console.log(err);
-    //   geojson = data;
-      // addDataLayer();
-    // });
-    baseLayers.forEach(function(l) {
-      var button = document.createElement('button'); 
-      button.textContent = l.label;
-      button.addEventListener('click', function() {
-        map.setStyle('mapbox://styles/mapbox/' + l.id); 
-      });
-
-      // menu.appendChild(button);
-
-    });
-     addDataLayer();
-  // }// end addDataLayer()
-  // addDataLayer();
+  
     //initialize search
     // searchBuildings(buildings);
     //Initialize legend
@@ -611,7 +494,66 @@
       'position': 'top-left'
     }));
 
-  });
+
+
+
+
+
+
+      // buildings.features.forEach(function(feature) {
+      //     var name = feature.properties['name'];
+      //     var layerID = 'p' + name;
+
+      //     // Add a layer for this symbol type if it hasn't been added already.
+      //     if (!map.getLayer(layerID)) {
+      //         map.addLayer({
+      //             "id": layerID,
+      //             "type": "symbol",
+      //             "source": "buildings",
+      //             "layout": {
+      //                 "icon-image": name + "-15",
+      //                 "icon-allow-overlap": true,
+      //                 "text-field": name,
+      //                 "text-font": ["Open Sans Bold", "Arial Unicode MS Bold"],
+      //                 "text-size": 11,
+      //                 "text-transform": "uppercase",
+      //                 "text-letter-spacing": 0.05,
+      //                 "text-offset": [0, 1.5]
+      //             },
+      //             "paint": {
+      //                 "text-color": "#202",
+      //                 "text-halo-color": "#fff",
+      //                 "text-halo-width": 2
+      //             },
+      //             "filter": ["==", "name", name]
+      //         });
+
+      //         layerIDs.push(layerID);
+      //     }
+      // });
+
+      // filterInput.addEventListener('keyup', function(e) {
+      //     // If the input value matches a layerID set
+      //     // it's visibility to 'visible' or else hide it.
+      //     var value = e.target.value.trim().toLowerCase();
+      //     layerIDs.forEach(function(layerID) {
+      //         map.setLayoutProperty(layerID, 'visibility',
+      //             layerID.indexOf(value) > -1 ? 'visible' : 'none');
+      //     });
+      // });
+
+
+
+
+
+
+
+
+
+
+
+
+  }); //end map.onLoad
   
 
   map.on('click', function(e) {
@@ -671,21 +613,6 @@
             )
           .addTo(map);
   } //end createPopup
-
-
-
-  // "lpd": 0,
-  // "skylit": 0,
-  // "autoOff": 1473.65094,
-  // "kwhDesign": 8.57486,
-  // "kwhTarget": 5.538512013,
-  // "kwhSavings": 3.036347987,
-  // "areaControl": 0,
-  // "powerAdjust": 1481.00082,
-  // "partOffOccSens": 379.7438,
-  // "primarySidelit": 113.5573935,
-  // "secondarySidelit": 0,
-
 
 
   const round = (number, places=2) => {
@@ -748,6 +675,87 @@
 
       });
     }
+      var ctx = document.getElementById("myChart").getContext("2d");
+    //   var myChart = new Chart(ctx, {
+    //     type: 'bar',
+    //     data: {
+    //         labels: ["kWh", "Blue", "Yellow", "Green", "Purple", "Orange"],
+    //         datasets: [{
+    //             label: '# of Votes',
+    //             data: [12, 19, 3, 5, 2, 3],
+    //             backgroundColor: [
+    //                 'rgba(255, 99, 132, 0.2)',
+    //                 'rgba(54, 162, 235, 0.2)',
+    //                 'rgba(255, 206, 86, 0.2)',
+    //                 'rgba(75, 192, 192, 0.2)',
+    //                 'rgba(153, 102, 255, 0.2)',
+    //                 'rgba(255, 159, 64, 0.2)'
+    //             ],
+    //             borderColor: [
+    //                 'rgba(255,99,132,1)',
+    //                 'rgba(54, 162, 235, 1)',
+    //                 'rgba(255, 206, 86, 1)',
+    //                 'rgba(75, 192, 192, 1)',
+    //                 'rgba(153, 102, 255, 1)',
+    //                 'rgba(255, 159, 64, 1)'
+    //             ],
+    //             borderWidth: 1
+    //         }]
+    //     },
+    //     options: {
+    //         title: {
+    //                    display: true,
+    //                    text: 'Custom Chart Title'
+    //                },
+    //         scales: {
+    //             yAxes: [{
+    //                 ticks: {
+    //                     beginAtZero:true
+    //                 }
+    //             }]
+    //         }
+
+    //     }
+    // }); //end myChart
+      var line = ctx.setLineDash([5, 15]);
+
+         var gradient = ctx.createLinearGradient(0, 0, 0, 300);
+         gradient.addColorStop(0, 'rgba(40,175,250,.25)');
+         gradient.addColorStop(1, 'rgba(40,175,250,0)');
+
+         var data = {
+             labels: ["January", "February", "March", "April", "May", "June", "July"],
+             datasets: [
+                 {
+                     label: "Before Code Cycle",
+                     pointDot : false,
+                     fillColor: gradient,
+                     strokeColor: "#005bab",
+                     pointColor: "#19283F",
+                     pointStrokeColor: "#005bab",
+                     pointHighlightFill: "#19283F",
+                     pointHighlightStroke: "#005bab",
+                     data: [35, 49, 60, null, null, null, null]
+                 },
+                 {
+                     label: "After Code Cycle",
+                     fillColor: "rgba(0,0,0,0)",
+                     strokeColor: "rgba(255,255,255,.9)",
+                     pointColor: "#19283F",
+                     pointStrokeColor: "rgba(255,255,255,.9)",
+                     pointHighlightFill: "#19283F",
+                     pointHighlightStroke: "#005bab",
+                     data: [null, null, null, 76, 86, 57, 90]
+                 }
+             ]
+         };
+
+         var options = {};
+
+         var myLineChart = new Chart(ctx, { type: 'bar',
+        data: data, options: options});
+         console.log(myLineChart);
+
   } //end buildLocationList
     
   function calcPropRadius(attributeValue) {
@@ -896,46 +904,27 @@
 
   } //end buildLegendList
 
-  document.getElementById('zoomto').addEventListener('click', function() {
+  // document.getElementById('zoomto').addEventListener('click', function() {
          
-          // Geographic coordinates of the LineString
-          var coordinates = buildings.features[0].geometry.coordinates;
-          console.log(coordinates);
+  //         // Geographic coordinates of the LineString
+  //         var coordinates = buildings.features[0].geometry.coordinates;
+  //         console.log(coordinates);
 
-          // Pass the first coordinates in the LineString to `lngLatBounds` &
-          // wrap each coordinate pair in `extend` to include them in the bounds
-          // result. A variation of this technique could be applied to zooming
-          // to the bounds of multiple Points or Polygon geomteries - it just
-          // requires wrapping all the coordinates with the extend method.
-          var bounds = coordinates.reduce(function(bounds, coord) {
-              return bounds.extend(coord);
-          }, new mapboxgl.LngLatBounds(coordinates[0], coordinates[0]));
+  //         // Pass the first coordinates in the LineString to `lngLatBounds` &
+  //         // wrap each coordinate pair in `extend` to include them in the bounds
+  //         // result. A variation of this technique could be applied to zooming
+  //         // to the bounds of multiple Points or Polygon geomteries - it just
+  //         // requires wrapping all the coordinates with the extend method.
+  //         var bounds = coordinates.reduce(function(bounds, coord) {
+  //             return bounds.extend(coord);
+  //         }, new mapboxgl.LngLatBounds(coordinates[0], coordinates[0]));
 
-          map.fitBounds(bounds, {
-              padding: 20
-          });
-      });
+  //         map.fitBounds(bounds, {
+  //             padding: 20
+  //         });
+  //     });
   
 
-  // var controlSearch = new L.Control.Search({
-  //     layer: layer.locations,
-
-  //     initial: false,
-  //     zoom: 15,
-  //     marker: false,
-  //     position: "topright",
-  //     textPlaceholder: "search projects..."
-  // });
-
-  // controlSearch.on("search:collapsed", function (e) {
-  //     map.flyTo([38.3, -122.0], 12);
-  // })
-
-  // controlSearch.on("search:locationfound", function(e) {
-  //         e.layer.openPopup();
-
-  // });
-  // map.addControl( controlSearch );
 
 
 
@@ -986,7 +975,6 @@
   //     });
   //   }
   // });
-
 
 
 
