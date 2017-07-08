@@ -1,0 +1,277 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature", "id": 1,
+      "properties": {
+        "id": 1,
+        "name": "DD Discount",
+        "type": "Retail and wholesale store",
+        "address": "2505 North Texas St.",
+        "city": "Fairfield",
+        "state": "ca",
+        "zip": 94533,
+        "fulladdress": "2505 North Texas St. Fairfield, 94533",
+        "lat": 41.85, 
+        "lon": -87.65,
+        "lpd": 4054.817782,
+        "skylit": 0,
+        "autoOff": 0,
+        "kwhDesign": 70.9495157,
+        "kwhTarget": 68.04238912,
+        "kwhSavings": 2.907126588,
+        "areaControl": 0,
+        "powerAdjust": 0,
+        "partOffOccSens": 0,
+        "primarySidelit": 0,
+        "secondarySidelit": 0,
+        "2005": 85, "2006": 38, "2007": 75, "2008": 30, "2009": 9, "2010": 15, "2011": 38 
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.035467,
+          38.27526
+        ]
+      }
+    },
+    {
+      "type": "Feature", "id": 2,
+      "properties": {
+         "id": 2,
+        "name": "Life Chiropractic",
+        "type": "All other",
+        "address": "210 Peabody Rd",
+        "city": "Vacaville",
+        "state": "ca",
+        "zip": 95687,
+        "fulladdress": "210 Peabody Rd Vacaville, 95687",
+        "lat": 41.85, 
+        "lon": -87.65,
+        "lpd": 0,
+        "skylit": 0,
+        "autoOff": 0,
+        "kwhDesign": 62.73715663,
+        "kwhTarget": 52.16680172,
+        "kwhSavings": 10.57035492,
+        "areaControl": 0,
+        "powerAdjust": 12192.20096,
+        "partOffOccSens": 0,
+        "primarySidelit": 0,
+        "secondarySidelit": 0,
+        "2005": 28, "2006": 29, "2007": 38, "2008": 26, "2009": 15, "2010": 12, "2011": 10 
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -121.9766822,
+          38.3501089
+        ]
+      }
+    },
+    {
+      "type": "Feature", "id": 3,
+      "properties": {
+         "id": 3,
+        "name": "Pacific Dental",
+        "type": "Medical buildings and clinic",
+        "address": "671 Elmira Rd",
+        "city": "Vacaville",
+        "state": "ca",
+        "zip": 95688,
+        "fulladdress": "671 Elmira Rd Vacaville, 95688",
+        "lat": 41.85, 
+        "lon": -87.65,
+        "lpd": 349.6360884,
+        "skylit": 0,
+        "autoOff": 75.520017,
+        "kwhDesign": 7.621488691,
+        "kwhTarget": 6.131341236,
+        "kwhSavings": 1.490147454,
+        "areaControl": 0,
+        "powerAdjust": 1116.446772,
+        "partOffOccSens": 330.13211,
+        "primarySidelit": 0,
+        "secondarySidelit": 0,
+        "2005": 18, "2006": 59, "2007": 22, "2008": 60, "2009": 82, "2010": 42, "2011": 18
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -121.9497941,
+          38.3517194
+        ]
+      }
+    },
+    {
+      "type": "Feature", "id": 4,
+      "properties": {
+         "id": 4,
+        "name": "Pawsh Place Vet ",
+        "type": "All other",
+        "address": "218 Dobbins",
+        "city": "Vacaville",
+        "state": "ca",
+        "zip": 95688,
+        "fulladdress": "218 Dobbins Vacaville, 95688",
+        "lat": 41.85, 
+        "lon": -87.65,
+        "lpd": 2956.19155,
+        "skylit": 0,
+        "autoOff": 4347.67746,
+        "kwhDesign": 23.62406249,
+        "kwhTarget": 17.30257364,
+        "kwhSavings": 6.321488848,
+        "areaControl": 0,
+        "powerAdjust": 541.134915,
+        "partOffOccSens": 0,
+        "primarySidelit": 301.6544181,
+        "secondarySidelit": 216.331149,
+        "2005": 35, "2006": 45, "2007": 31, "2008": 26, "2009": 14, "2010": 9, "2011": 15 
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -121.9890381,
+          38.3572342
+        ]
+      }
+    },
+    {
+      "type": "Feature", "id": 5,
+      "properties": {
+         "id": 5,
+        "name": "Planet Fitness",
+        "type": "All other",
+        "address": "2525 N Texas St,",
+        "city": "Fairfield",
+        "state": "ca",
+        "zip": 94533,
+        "fulladdress": "2525 N Texas St, Fairfield, 94533",
+        "lat": 41.85, 
+        "lon": -87.65,
+        "lpd": 0,
+        "skylit": 0,
+        "autoOff": 7428.669638,
+        "kwhDesign": 52.44833839,
+        "kwhTarget": 35.19144456,
+        "kwhSavings": 17.25689383,
+        "areaControl": 0,
+        "powerAdjust": 11402.1428,
+        "partOffOccSens": 0,
+        "primarySidelit": 0,
+        "secondarySidelit": 49.85136,
+        "2005": 12, "2006": 31, "2007": 15, "2008": 22, "2009": 28, "2010": 38, "2011": 31
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.0359703,
+          38.2749076
+        ]
+      }
+    },
+    {
+      "type": "Feature", "id": 6,
+      "properties": {
+         "id": 6,
+        "name": "Saks Fifth Avenue",
+        "type": "Retail and wholesale store",
+        "address": "1680 E Monte Vista Ave",
+        "city": "Vacaville",
+        "state": "ca",
+        "zip": 95688,
+        "fulladdress": "1680 E Monte Vista Ave Vacaville, 95688",
+        "lat": 41.85, 
+        "lon": -87.65,
+        "lpd": 0,
+        "skylit": 17989.24025,
+        "autoOff": 0,
+        "kwhDesign": 78.37253312,
+        "kwhTarget": 67.20509021,
+        "kwhSavings": 11.1674429,
+        "areaControl": 28.664532,
+        "powerAdjust": 353.161734,
+        "partOffOccSens": 0,
+        "primarySidelit": 0,
+        "secondarySidelit": 0,
+        "2005": 25, "2006": 50, "2007": 25, "2008": 25, "2009": 25, "2010": 25, "2011": 100
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -121.9591074,
+          38.3698599
+        ]
+      }
+    },
+    {
+      "type": "Feature", "id": 7,
+      "properties": {
+         "id": 7,
+        "name": "Smart and Final",
+        "type": "Grocery store",
+        "address": "2525 N Texas St ",
+        "city": "Fairfield",
+        "state": "ca",
+        "zip": 94533,
+        "fulladdress": "2525 N Texas St  Fairfield, 94533",
+        "lat": 41.85, 
+        "lon": -87.65,
+        "lpd": 0,
+        "skylit": 0,
+        "autoOff": 0,
+        "kwhDesign": 70.48373809,
+        "kwhTarget": 68.97552769,
+        "kwhSavings": 1.508210399,
+        "areaControl": 0,
+        "powerAdjust": 1101.25702,
+        "partOffOccSens": 142.09768,
+        "primarySidelit": 446.3378807,
+        "secondarySidelit": 258.5681516,
+        "2005": 88, "2006": 46, "2007": 56, "2008": 15, "2009": 12, "2010": 25, "2011": 46
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -122.0359703,
+          38.2749076
+        ]
+      }
+    },
+    {
+      "type": "Feature", "id": 8,
+      "properties": {
+         "id": 8,
+        "name": "Unlimited Smiles AS 1510-0394",
+        "type": "Medical buildings and clinic",
+        "address": "\n2501 Nut Tree Rd",
+        "city": "Vacaville",
+        "state": "ca",
+        "zip": 95687,
+        "fulladdress": "\n2501 Nut Tree Rd Vacaville, 95687",
+        "lat": 41.85, 
+        "lon": -87.65,
+        "lpd": 0,
+        "skylit": 0,
+        "autoOff": 1473.65094,
+        "kwhDesign": 8.57486,
+        "kwhTarget": 5.538512013,
+        "kwhSavings": 3.036347987,
+        "areaControl": 0,
+        "powerAdjust": 1481.00082,
+        "partOffOccSens": 379.7438,
+        "primarySidelit": 113.5573935,
+        "secondarySidelit": 0,
+        "2005": 52, "2006": 51, "2007": 46, "2008": 68, "2009": 75, "2010": 85, "2011": 96
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -121.9537155,
+          38.3350313
+        ]
+      }
+    }
+  ]
+}
