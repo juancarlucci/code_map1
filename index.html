@@ -675,86 +675,88 @@ var filterInput = document.getElementById('filter-input');
 
       });
     }
+
+
       var ctx = document.getElementById("myChart").getContext("2d");
-    //   var myChart = new Chart(ctx, {
-    //     type: 'bar',
-    //     data: {
-    //         labels: ["kWh", "Blue", "Yellow", "Green", "Purple", "Orange"],
-    //         datasets: [{
-    //             label: '# of Votes',
-    //             data: [12, 19, 3, 5, 2, 3],
-    //             backgroundColor: [
-    //                 'rgba(255, 99, 132, 0.2)',
-    //                 'rgba(54, 162, 235, 0.2)',
-    //                 'rgba(255, 206, 86, 0.2)',
-    //                 'rgba(75, 192, 192, 0.2)',
-    //                 'rgba(153, 102, 255, 0.2)',
-    //                 'rgba(255, 159, 64, 0.2)'
-    //             ],
-    //             borderColor: [
-    //                 'rgba(255,99,132,1)',
-    //                 'rgba(54, 162, 235, 1)',
-    //                 'rgba(255, 206, 86, 1)',
-    //                 'rgba(75, 192, 192, 1)',
-    //                 'rgba(153, 102, 255, 1)',
-    //                 'rgba(255, 159, 64, 1)'
-    //             ],
-    //             borderWidth: 1
-    //         }]
-    //     },
-    //     options: {
-    //         title: {
-    //                    display: true,
-    //                    text: 'Custom Chart Title'
-    //                },
-    //         scales: {
-    //             yAxes: [{
-    //                 ticks: {
-    //                     beginAtZero:true
-    //                 }
-    //             }]
-    //         }
+      var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ["kWh", "Blue", "Yellow", "Green", "Purple", "Orange"],
+            datasets: [{
+                label: 'kWh savings across building type',
+                data: [12, 19, 3, 5, 2, 3],
+                backgroundColor: [
+                    '#bfd3e6',
+                    '#9ebcda',
+                    '#8c96c6',
+                    '#8856a7',
+                    '#810f7c',
+                    '#816996'
+                ],
+                borderColor: [
+                    '#627896',
+                    '#627896',
+                    '#627896',
+                    '#627896',
+                    '#627896',
+                    '#627896'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            title: {
+                       display: true,
+                       text: 'Co2'
+                   },
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero:true
+                    }
+                }]
+            }
 
-    //     }
-    // }); //end myChart
-      var line = ctx.setLineDash([5, 15]);
+        }
+    }); //end myChart
+      // var line = ctx.setLineDash([5, 15]);
 
-         var gradient = ctx.createLinearGradient(0, 0, 0, 300);
-         gradient.addColorStop(0, 'rgba(40,175,250,.25)');
-         gradient.addColorStop(1, 'rgba(40,175,250,0)');
+      //    var gradient = ctx.createLinearGradient(0, 0, 0, 300);
+      //    gradient.addColorStop(0, '#627896');
+      //    gradient.addColorStop(1, 'rgba(40,175,250,0)');
 
-         var data = {
-             labels: ["January", "February", "March", "April", "May", "June", "July"],
-             datasets: [
-                 {
-                     label: "Before Code Cycle",
-                     pointDot : false,
-                     fillColor: gradient,
-                     strokeColor: "#005bab",
-                     pointColor: "#19283F",
-                     pointStrokeColor: "#005bab",
-                     pointHighlightFill: "#19283F",
-                     pointHighlightStroke: "#005bab",
-                     data: [35, 49, 60, null, null, null, null]
-                 },
-                 {
-                     label: "After Code Cycle",
-                     fillColor: "rgba(0,0,0,0)",
-                     strokeColor: "rgba(255,255,255,.9)",
-                     pointColor: "#19283F",
-                     pointStrokeColor: "rgba(255,255,255,.9)",
-                     pointHighlightFill: "#19283F",
-                     pointHighlightStroke: "#005bab",
-                     data: [null, null, null, 76, 86, 57, 90]
-                 }
-             ]
-         };
+      //    var data = {
+      //        labels: ["January", "February", "March", "April", "May", "June", "July"],
+      //        datasets: [
+      //            {
+      //                label: "Before Code Cycle",
+      //                pointDot : false,
+      //                fillColor: gradient,
+      //                strokeColor: "#816996",
+      //                pointColor: "#FA4D10",
+      //                pointStrokeColor: "#816996",
+      //                pointHighlightFill: "#FA4D10",
+      //                pointHighlightStroke: "#816996",
+      //                data: [35, 49, 60, null, null, null, null]
+      //            },
+      //            {
+      //                label: "After Code Cycle",
+      //                fillColor: "rgba(0,0,0,0)",
+      //                strokeColor: "rgba(255,255,255,.9)",
+      //                pointColor: "#FA4D10",
+      //                pointStrokeColor: "rgba(255,255,255,.9)",
+      //                pointHighlightFill: "#FA4D10",
+      //                pointHighlightStroke: "#816996",
+      //                data: [null, null, null, 76, 86, 57, 90]
+      //            }
+      //        ]
+      //    };
 
-         var options = {};
+      //    var options = {};
 
-         var myLineChart = new Chart(ctx, { type: 'bar',
-        data: data, options: options});
-         console.log(myLineChart);
+      //    var myLineChart = new Chart(ctx, { type: 'bar',
+      //   data: data, options: options});
+      //    console.log(myLineChart);
 
   } //end buildLocationList
     

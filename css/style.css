@@ -3,9 +3,9 @@
          --background-color: #FFF;
          --main-color: #627896;
          --main-color-lighter: rgba(98,120,150, 0.6);
-         --accent-color: #005bab;
+         --accent-color: #816996;
 
-         // Sizing/* --base: 16px;
+         // Sizing/* --base: 16px; 
          --tiny-spacing: var(--base * 0.25);
          --small-spacing: var(--base * 0.5);
          --default-spacing: var(--base);
@@ -84,6 +84,11 @@
          margin-left: -250px;
          overflow-y: auto;
          background: rgba(255, 255, 255, 0.79);
+       }
+       .chart-container {
+        position: relative; 
+        /*height:40vh; */
+        /*width:80vw"*/
        }
        .pad2 {
          padding:20px;
@@ -168,7 +173,7 @@
          background:none;
        }
        ::-webkit-scrollbar-thumb {
-         background:var(--accent-color);
+         background:var(--main-color);
          border-radius:0;
        }
 
@@ -301,10 +306,5 @@
              background-color: var(--main-color-lighter);
              }
 
-             body #legend .legend #totalSavings div p {
-                /*text-align: center !important;
-                font-size: 3em;
-                color: var(--main-color);
-                font-weight: bold*/
-             }
+        
 
