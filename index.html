@@ -681,10 +681,10 @@ var filterInput = document.getElementById('filter-input');
       var myChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: ["kWh", "Blue", "Yellow", "Green", "Purple", "Orange"],
+            labels: ["office", "retail", "grocery", "school", "hospital", "univeristy"],
             datasets: [{
-                label: 'kWh savings across building type',
-                data: [12, 19, 3, 5, 2, 3],
+                label: 'kWh',
+                data: [17, 16, 19, 11, 15, 13],
                 backgroundColor: [
                     '#bfd3e6',
                     '#9ebcda',
@@ -707,7 +707,7 @@ var filterInput = document.getElementById('filter-input');
         options: {
             title: {
                        display: true,
-                       text: 'Co2'
+                       text: 'Co2 savings across building type'
                    },
             scales: {
                 yAxes: [{
