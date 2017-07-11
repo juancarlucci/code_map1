@@ -11,6 +11,7 @@
       <script src="https://d3js.org/d3.v4.min.js"></script>
       <script type="text/javascript" src="js/leaflet.js"></script>
       <script type="text/javascript" src="js/jquery.js"></script>
+      <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
       <script src="js/leaflet-search.min.js"></script>
       <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.2.0/leaflet-omnivore.min.js'></script>
       <link rel="stylesheet" href="css/style.css">
@@ -64,10 +65,17 @@
           padding: 10px;
           box-shadow: 0 0 0 2px rgba(0,0,0,0.1);
           border-radius: 3px;
-      .myChart  {
+        }
+
+      #myChart  {
           position: absolute;
-          top: 5px;
-          z-index: 100000;
+          /*top: 5px;*/
+          /*z-index: 100000;*/
+       }
+       .chart-container {
+          position: relative; 
+          /*height:40vh; */
+          /*width:80vw*/
        }
       </style>
       
@@ -79,6 +87,8 @@
         <h2>Total KWH Savings for all projects:</h2> 
         <!-- <div id="totalSavings"></div> -->
         <div> <p id="totalSavings"></p></div>
+        <div> <p id="currentZoom"></p></div>
+
         <!-- <h4>Scale</h4> -->
 
         <!-- <div ><span  style='background-color: #edf8fb; height:26px; width:26px;'></span>1.49</div>
@@ -99,10 +109,8 @@
       <canvas id="myChart"></canvas>
     </div>
 
-
+    </div> <!-- end sidebar -->
     <div id='listings' class='listings'></div>
-    </div>
-
    
 
     <div id='map' class='map'> </div>
@@ -480,6 +488,31 @@ var filterInput = document.getElementById('filter-input');
         }
 
     });
+
+
+    // //test circle mouse over
+    // var circle = L.circle([-121.9537, 38.33], 1000, {
+    //   weight: 1,
+    //   fillColor: '#816996',
+    //   className: "test"
+    // }).
+    //   addTo(map).on({
+    //     "mouseover": function () {
+    //       circle.setStyle({
+    //         weight: 3,
+    //         fillColor: '#810f7c'
+    //       })
+    //     },
+    //     "mouseout": function () {
+    //       circle.setStyle({
+    //         weight: 1,
+    //         fillColor: '#bfd3e6'
+    //       })
+    //     }
+    //   });
+
+
+
   
     //initialize search
     // searchBuildings(buildings);
@@ -569,7 +602,10 @@ var filterInput = document.getElementById('filter-input');
         // 2. Close all other popups and display popup for clicked building
         createPopUp(clickedPoint);
 
-        // 3. Highlight listing in sidebar (and remove highlight for all other listings)
+        // 3. Create listing chart
+        updateListingChart(clickedPoint);
+
+        // 4. Highlight listing in sidebar (and remove highlight for all other listings)
        var activeItem = document.getElementsByClassName('active');
         if (activeItem[0]) {
           activeItem[0].classList.remove('active');
@@ -593,7 +629,7 @@ var filterInput = document.getElementById('filter-input');
   function flyToBuilding(currentFeature) {
     map.flyTo({
         center: currentFeature.geometry.coordinates,
-        zoom: 15
+        zoom: 13
       }); 
   }
 
@@ -619,6 +655,64 @@ var filterInput = document.getElementById('filter-input');
    const m = Math.pow(10, places);
    return Math.floor(number * m) / m;
   }
+
+    function updateListingChart(currentFeature) {
+
+      // chartJsProvider.setOptions({
+      //                 responsive: true,
+      //                 maintainAspectRatio: false
+      //             });
+
+       if(ctx){
+          ctx.reset()
+        };
+       var ctx = document.getElementById("myChart").getContext("2d");
+       var myChart = new Chart(ctx, {
+         type: 'bar',
+         data: {
+             labels: ["design", "target", "savings"],
+             datasets: [{
+                 label: currentFeature.properties.name,
+                 data: [round(currentFeature.properties.kwhDesign),
+                       round(currentFeature.properties.kwhTarget),
+                        round(currentFeature.properties.kwhSavings)],
+                 backgroundColor: [
+                     '#bfd3e6',
+                     '#9ebcda',
+                     '#8c96c6',
+                     '#8856a7',
+                     '#810f7c',
+                     '#816996'
+                 ],
+                 borderColor: [
+                     '#627896',
+                     '#627896',
+                     '#627896',
+                     '#627896',
+                     '#627896',
+                     '#627896'
+                 ],
+                 borderWidth: 1
+             }]
+         },
+         options: {
+             title: {
+                        display: true,
+                        text: "Building: " + currentFeature.properties.name 
+                    },
+             scales: {
+                 yAxes: [{
+                     ticks: {
+                         beginAtZero:true
+                     }
+                 }]
+             }
+
+         }
+     }); //end myChart 
+  } //end updateListingChart
+
+
  
   function buildLocationList(data) {
     for (i = 0; i < data.features.length; i++) {
@@ -665,7 +759,10 @@ var filterInput = document.getElementById('filter-input');
         // 2. Close all other popups and display popup for clicked building
         createPopUp(clickedListing);
 
-        // 3. Highlight listing in sidebar (and remove highlight for all other listings)
+        //3. Create new chart for clicked listing
+        updateListingChart(clickedListing);
+
+        // 4. Highlight listing in sidebar (and remove highlight for all other listings)
         var activeItem = document.getElementsByClassName('active');
 
         if (activeItem[0]) {
@@ -677,48 +774,48 @@ var filterInput = document.getElementById('filter-input');
     }
 
 
-      var ctx = document.getElementById("myChart").getContext("2d");
-      var myChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: ["office", "retail", "grocery", "school", "hospital", "univeristy"],
-            datasets: [{
-                label: 'kWh',
-                data: [17, 16, 19, 11, 15, 13],
-                backgroundColor: [
-                    '#bfd3e6',
-                    '#9ebcda',
-                    '#8c96c6',
-                    '#8856a7',
-                    '#810f7c',
-                    '#816996'
-                ],
-                borderColor: [
-                    '#627896',
-                    '#627896',
-                    '#627896',
-                    '#627896',
-                    '#627896',
-                    '#627896'
-                ],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            title: {
-                       display: true,
-                       text: 'Co2 savings across building type'
-                   },
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero:true
-                    }
-                }]
-            }
+    //   var ctx = document.getElementById("myChart").getContext("2d");
+    //   var myChart = new Chart(ctx, {
+    //     type: 'bar',
+    //     data: {
+    //         labels: ["office", "retail", "grocery", "school", "hospital", "univeristy"],
+    //         datasets: [{
+    //             label: 'kWh',
+    //             data: [round(prop.kwhSavings), 16, 19, 11, 15, 13],
+    //             backgroundColor: [
+    //                 '#bfd3e6',
+    //                 '#9ebcda',
+    //                 '#8c96c6',
+    //                 '#8856a7',
+    //                 '#810f7c',
+    //                 '#816996'
+    //             ],
+    //             borderColor: [
+    //                 '#627896',
+    //                 '#627896',
+    //                 '#627896',
+    //                 '#627896',
+    //                 '#627896',
+    //                 '#627896'
+    //             ],
+    //             borderWidth: 1
+    //         }]
+    //     },
+    //     options: {
+    //         title: {
+    //                    display: true,
+    //                    text: 'Co2 savings across building type'
+    //                },
+    //         scales: {
+    //             yAxes: [{
+    //                 ticks: {
+    //                     beginAtZero:true
+    //                 }
+    //             }]
+    //         }
 
-        }
-    }); //end myChart
+    //     }
+    // }); //end myChart
       // var line = ctx.setLineDash([5, 15]);
 
       //    var gradient = ctx.createLinearGradient(0, 0, 0, 300);
@@ -906,6 +1003,16 @@ var filterInput = document.getElementById('filter-input');
 
   } //end buildLegendList
 
+  //Show zoom level
+  var currentZoom = document.getElementById("currentZoom");
+
+  function showZoom() {
+    currentZoom.innerHTML = map.getZoom();
+  }
+
+  map.on("zoomend", showZoom);
+  showZoom();
+
   // document.getElementById('zoomto').addEventListener('click', function() {
          
   //         // Geographic coordinates of the LineString
@@ -977,7 +1084,17 @@ var filterInput = document.getElementById('filter-input');
   //     });
   //   }
   // });
-
+    $( function() {
+    $( "#sortable" ).sortable({
+      revert: true
+    });
+    $( "#draggable" ).draggable({
+      connectToSortable: "#sortable",
+      helper: "clone",
+      revert: "invalid"
+    });
+    $( "ul, li" ).disableSelection();
+  } );
 
 
 

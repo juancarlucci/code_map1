@@ -1,203 +1,118 @@
 <!DOCTYPE html>
 <html>
   <head>
-      <meta charset='utf-8' />
-      <title>Store Locator</title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <title>CodeCycle Map</title>
       <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
       <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700' rel='stylesheet'>
       <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.33.1/mapbox-gl.js'></script>
       <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.33.1/mapbox-gl.css' rel='stylesheet' />
+      <script src="https://d3js.org/d3.v4.min.js"></script>
+      <script type="text/javascript" src="js/leaflet.js"></script>
+      <script type="text/javascript" src="js/jquery.js"></script>
+      <script src="js/leaflet-search.min.js"></script>
+      <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.2.0/leaflet-omnivore.min.js'></script>
+      <link rel="stylesheet" href="css/style.css">
+
+      <script type="text/javascript" src="js/Chart.bundle.min.js"></script>
+      <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.min.js"> -->
+
+
+        <!-- <link rel="stylesheet" href="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.css"> -->
+    <!-- <script src="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script> -->
+    <link rel="stylesheet" href="css/leaflet-search.min.css">
       
       <style>
-        
-        body {
-          color:#404040;
-          font:400 15px/22px 'Source Sans Pro', 'Helvetica Neue', Sans-serif;
-          margin:0;
-          padding:0;
-          -webkit-font-smoothing:antialiased;
-        }
-        
-        * {
-          -webkit-box-sizing:border-box;
-          -moz-box-sizing:border-box;
-          box-sizing:border-box;
-        }
-
-        .sidebar {
-          position:absolute;
-          width:33.3333%;
-          height:100%;
-          top:0;left:0;
-          overflow:hidden;
-          border-right:1px solid rgba(0,0,0,0.25);
-        }
-        .pad2 {
-          padding:20px;
-        }
-
-        .map {
-          position:absolute;
-          left:33.3333%;
-          width:66.6666%;
-          top:0;bottom:0;
-        }
-
-        h1 {
-          font-size:22px;
-          margin:0;
-          font-weight:400;
-          line-height: 20px;
-          padding: 20px 2px;
-        }
-        
-        a {
-          color:#404040;
-          text-decoration:none;
-        }
-        
-        a:hover { 
-          color:#101010; 
-        }
-
-        .heading {
-          background:#fff;
-          border-bottom:1px solid #eee;
-          min-height:60px;
-          line-height:60px;
-          padding:0 10px;
-        }
-
-        .listings {
-          height:100%;
-          overflow:auto;
-          padding-bottom:60px;
-        }
-
-        .listings .item {
-          display:block;
-          border-bottom:1px solid #eee;
-          padding:10px;
-          text-decoration:none;
-        }
-
-        .listings .item:last-child { border-bottom:none; }
-        .listings .item .title {
-          display:block;
-          color:#00853e;
-          font-weight:700;
-        }
-
-        .listings .item .title small { font-weight:400; }
-        .listings .item.active .title,
-        .listings .item .title:hover { color:#8cc63f; }
-        .listings .item.active {
-          background-color:#f8f8f8;
-        }
-        ::-webkit-scrollbar {
-          width:3px;
-          height:3px;
-          border-left:0;
-          background:rgba(0,0,0,0.1);
-        }
-        ::-webkit-scrollbar-track {
-          background:none;
-        }
-        ::-webkit-scrollbar-thumb {
-          background:#00853e;
-          border-radius:0;
-        }
-
-        .marker {
+      .btn-control {
+          font:bold 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+          background-color: rgba(98,120,150, 0.6)
+          color: #fff;
+          /*position: absolute;*/
+          top: 20px;
+          left: 50%;
+          z-index: 1;
           border: none;
+          width: 100px;
+          /*margin-left:-100px;*/
+          display: block;
           cursor: pointer;
-          height: 56px;
-          width: 56px;
-          background-image: url(marker.png);
-          background-color: rgba(0, 0, 0, 0);
-          transform: translate(28px, 56px, 0);
-        }
+          padding: 7px 13px;
+          border-radius: 3px;
+      }
 
-        .clearfix { display:block; }
-        .clearfix:after {
-          content:'.';
-          display:block;
-          height:0;
-          clear:both;
-          visibility:hidden;
-        }
+      .btn-control:hover {
+          background-color: #4ea0da;
+      }
 
-        /* Marker tweaks */
-        .mapboxgl-popup {
-          padding-bottom: 50px;
-        }
+      .filter-ctrl {
+          position: absolute;
+          top: 10px;
+          right: 10px;
+          z-index: 1;
+          width: 180px;
+      }
 
-        .mapboxgl-popup-close-button {
-          display:none;
-        }
-        .mapboxgl-popup-content {
-          font:400 15px/22px 'Source Sans Pro', 'Helvetica Neue', Sans-serif;
-          padding:0;
-          width:180px;
-        }
-        .mapboxgl-popup-content-wrapper {
-          padding:1%;
-        }
-        .mapboxgl-popup-content h3 {
-          background:#91c949;
-          color:#fff;
-          margin:0;
-          display:block;
-          padding:10px;
-          border-radius:3px 3px 0 0;
-          font-weight:700;
-          margin-top:-15px;
-        }
-
-        .mapboxgl-popup-content h4 {
-          margin:0;
-          display:block;
-          padding: 10px 10px 10px 10px;
-          font-weight:400;
+      .filter-ctrl input[type=text] {
+          font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+          width: 100%;
+          border: 0;
+          background-color: #fff;
+          height: 40px;
           margin: 0;
+          color: rgba(0,0,0,.5);
+          padding: 10px;
+          box-shadow: 0 0 0 2px rgba(0,0,0,0.1);
+          border-radius: 3px;
         }
 
-        .mapboxgl-popup-content div {
-          padding:10px;
-        }
-        
-        .mapboxgl-container .leaflet-marker-icon { 
-          cursor:pointer; 
-        }
-
-        .mapboxgl-popup-anchor-top > .mapboxgl-popup-content {
-          margin-top: 15px;
-        }
-
-        .mapboxgl-popup-anchor-top > .mapboxgl-popup-tip {
-          border-bottom-color: #91c949;
-        }
-        .filter-ui {
-          background:#fff;
-          position:absolute;
-          top:10px;
-          right:10px;
-          z-index:100;
-          padding:10px;
-          border-radius:3px;
-          }
+      .myChart  {
+          position: absolute;
+          top: 5px;
+          z-index: 100000;
+       }
       </style>
+      
   </head>
   
   <body>
+  <!-- add html elements to the legend !-->
+      <div id='legend' class='legend'>
+        <h2>Total KWH Savings for all projects:</h2> 
+        <!-- <div id="totalSavings"></div> -->
+        <div> <p id="totalSavings"></p></div>
+        <!-- <h4>Scale</h4> -->
+
+        <!-- <div ><span  style='background-color: #edf8fb; height:26px; width:26px;'></span>1.49</div>
+        <div ><span style='background-color: #ccece6; height:65px; width:65px;'></span>6.32</div>
+        <div ><span style='background-color: #99d8c9; height:70px; width:70px;'></span>8.05</div>
+        <div ><span style='background-color: #66c2a4; height:85px; width:85px;'></span>13.91</div>
+        <div ><span style='background-color: #41ae76; height:93px; width:93px;'></span>15.46</div>
+        <div ><span style='background-color: #238b45; height:105px; width:105px;'></span>17.25.00+</div> -->
+      </div>
     <div class='sidebar'>
       <div class='heading'>
-        <nav id='filters' class='filter-ui'></nav>
-        <h1>Our locations</h1>
+        <!-- <nav id='filters' class='filter-ui'></nav> -->
+        <h1 class='siteTitle'>Code Cycle</h1>
+        <!-- <button id='zoomto' class='btn-control'>Zoom to bounds</button> -->
       </div>
+      <!-- <input id='search' class='search-ui' placeholder='Seach for buildings...' /> -->
+    <div class="chart-container">
+      <canvas id="myChart"></canvas>
+    </div>
+
+
     <div id='listings' class='listings'></div>
     </div>
+
+   
+
     <div id='map' class='map'> </div>
+   <!--  <div class='filter-ctrl'>
+        <input id='filter-input' type='text' name='filter' placeholder='Filter by name' />
+    </div> -->
+
+    <!-- <button id='zoomto' class='btn-control'>Zoom to bounds</button> -->
     
   <script>
   // This will let you use the .remove() function later on
@@ -208,315 +123,325 @@
       }
     };
   }
+  
 
-  mapboxgl.accessToken = 'pk.eyJ1IjoiZXhhbXBsZXMiLCJhIjoiY2lqbmpqazdlMDBsdnRva284cWd3bm11byJ9.V6Hg2oYJwMAxeoR9GEzkAA';
+  var colorList = [
+      [1.614, '#edf8fb'],
+      [4.132, '#bfd3e6'],
+      [8.056, '#9ebcda'],
+      [13.919, '#8c96c6'],
+      [20.464, '#8856a7'],
+      [34.615, '#810f7c']
+  ];
+
+  mapboxgl.accessToken = 'pk.eyJ1IjoianVhbmNhcmx1Y2NpIiwiYSI6ImNpdzZzcGgwZTAwMWUydHRjaXdnZ29yY3IifQ.OP_E0DFK0JcIb_CT81veqg';
+
+
+//FILTER
+var layerIDs = []; // Will contain a list used to filter against.
+var filterInput = document.getElementById('filter-input');
+
+
+
+
 
   // This adds the map
   var map = new mapboxgl.Map({
     // container id specified in the HTML
     container: 'map', 
     // style URL
-    style: 'mapbox://styles/mapbox/light-v9', 
+    style: 'mapbox://styles/juancarlucci/cj4ixk05q1a3x2spb44qq9cy3',
+    // style: 'mapbox://styles/mapbox/light-v9' ,
+    
     // initial position in [long, lat] format
     center: [-122., 38.3], 
     // initial zoom
-    zoom: 12
+    zoom: 11,
+    minZoom: 8
   });
 
-  var filters = document.getElementById('filters');
+  // var filters = document.getElementById('filters');
 
-  var buildings = {
-  "type": "FeatureCollection",
-  "features": [
-    {
-      "type": "Feature", "id": 1,
-      "properties": {
-        "id": 1,
-        "name": "15 - DD Discount",
-        "type": "Retail and wholesale store",
-        "address": "2505 North Texas St.",
-        "city": "Fairfield",
-        "state": "ca",
-        "zip": 94533,
-        "fulladdress": "2505 North Texas St. Fairfield, 94533",
-        "lat": 41.85, 
-        "lon": -87.65,
-        "lpd": 4054.817782,
-        "skylit": 0,
-        "autoOff": 0,
-        "kwhDesign": 70.9495157,
-        "kwhTarget": 68.04238912,
-        "kwhSavings": 2.907126588,
-        "areaControl": 0,
-        "powerAdjust": 0,
-        "partOffOccSens": 0,
-        "primarySidelit": 0,
-        "secondarySidelit": 0,
-        "2005": 85, "2006": 38, "2007": 75, "2008": 30, "2009": 9, "2010": 15, "2011": 38 
+    var buildings = {
+    "type": "FeatureCollection",
+    "features": [
+      {
+        "type": "Feature", "id": 1,
+        "properties": {
+          "id": 1,
+          "name": "Discount",
+          "type": "Retail and wholesale store",
+          "address": "2505 North Texas St.",
+          "city": "Fairfield",
+          "state": "ca",
+          "zip": 94533,
+          "fulladdress": "2505 North Texas St. Fairfield, 94533",
+          "lat": 41.85, 
+          "lon": -87.65,
+          "lpd": 4054.817782,
+          "skylit": 0,
+          "autoOff": 0,
+          "kwhDesign": 70.9495157,
+          "kwhTarget": 68.04238912,
+          "kwhSavings": 2.907126588,
+          "areaControl": 0,
+          "powerAdjust": 0,
+          "partOffOccSens": 0,
+          "primarySidelit": 0,
+          "secondarySidelit": 0,
+          "2005": 85, "2006": 38, "2007": 75, "2008": 30, "2009": 9, "2010": 15, "2011": 38 
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -122.021467,
+            38.27526
+          ]
+        }
       },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -122.035467,
-          38.27526
-        ]
-      }
-    },
-    {
-      "type": "Feature", "id": 2,
-      "properties": {
-         "id": 2,
-        "name": "15 - Life Chiropractic",
-        "type": "All other",
-        "address": "210 Peabody Rd",
-        "city": "Vacaville",
-        "state": "ca",
-        "zip": 95687,
-        "fulladdress": "210 Peabody Rd Vacaville, 95687",
-        "lat": 41.85, 
-        "lon": -87.65,
-        "lpd": 0,
-        "skylit": 0,
-        "autoOff": 0,
-        "kwhDesign": 62.73715663,
-        "kwhTarget": 52.16680172,
-        "kwhSavings": 10.57035492,
-        "areaControl": 0,
-        "powerAdjust": 12192.20096,
-        "partOffOccSens": 0,
-        "primarySidelit": 0,
-        "secondarySidelit": 0,
-        "2005": 28, "2006": 29, "2007": 38, "2008": 26, "2009": 15, "2010": 12, "2011": 10 
+      {
+        "type": "Feature", "id": 2,
+        "properties": {
+           "id": 2,
+          "name": "Chiropractic",
+          "type": "All other",
+          "address": "210 Peabody Rd",
+          "city": "Vacaville",
+          "state": "ca",
+          "zip": 95687,
+          "fulladdress": "210 Peabody Rd Vacaville, 95687",
+          "lat": 41.85, 
+          "lon": -87.65,
+          "lpd": 0,
+          "skylit": 0,
+          "autoOff": 0,
+          "kwhDesign": 62.73715663,
+          "kwhTarget": 52.16680172,
+          "kwhSavings": 10.57035492,
+          "areaControl": 0,
+          "powerAdjust": 12192.20096,
+          "partOffOccSens": 0,
+          "primarySidelit": 0,
+          "secondarySidelit": 0,
+          "2005": 28, "2006": 29, "2007": 38, "2008": 26, "2009": 15, "2010": 12, "2011": 10 
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -121.9766822,
+            38.3501089
+          ]
+        }
       },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -121.9766822,
-          38.3501089
-        ]
-      }
-    },
-    {
-      "type": "Feature", "id": 3,
-      "properties": {
-         "id": 3,
-        "name": "15 - Pacific Dental",
-        "type": "Medical buildings and clinic",
-        "address": "671 Elmira Rd",
-        "city": "Vacaville",
-        "state": "ca",
-        "zip": 95688,
-        "fulladdress": "671 Elmira Rd Vacaville, 95688",
-        "lat": 41.85, 
-        "lon": -87.65,
-        "lpd": 349.6360884,
-        "skylit": 0,
-        "autoOff": 75.520017,
-        "kwhDesign": 7.621488691,
-        "kwhTarget": 6.131341236,
-        "kwhSavings": 1.490147454,
-        "areaControl": 0,
-        "powerAdjust": 1116.446772,
-        "partOffOccSens": 330.13211,
-        "primarySidelit": 0,
-        "secondarySidelit": 0,
-        "2005": 18, "2006": 59, "2007": 22, "2008": 60, "2009": 82, "2010": 42, "2011": 18
+      {
+        "type": "Feature", "id": 3,
+        "properties": {
+           "id": 3,
+          "name": "Dental",
+          "type": "Medical buildings and clinic",
+          "address": "665 Elmira Rd",
+          "city": "Vacaville",
+          "state": "ca",
+          "zip": 95688,
+          "fulladdress": "671 Elmira Rd Vacaville, 95688",
+          "lat": 41.85, 
+          "lon": -87.65,
+          "lpd": 349.6360884,
+          "skylit": 0,
+          "autoOff": 75.520017,
+          "kwhDesign": 7.621488691,
+          "kwhTarget": 6.131341236,
+          "kwhSavings": 1.490147454,
+          "areaControl": 0,
+          "powerAdjust": 1116.446772,
+          "partOffOccSens": 330.13211,
+          "primarySidelit": 0,
+          "secondarySidelit": 0,
+          "2005": 18, "2006": 59, "2007": 22, "2008": 60, "2009": 82, "2010": 42, "2011": 18
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -121.9497941,
+            38.3517194
+          ]
+        }
       },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -121.9497941,
-          38.3517194
-        ]
-      }
-    },
-    {
-      "type": "Feature", "id": 4,
-      "properties": {
-         "id": 4,
-        "name": "15 - Pawsh Place Vet ",
-        "type": "All other",
-        "address": "218 Dobbins",
-        "city": "Vacaville",
-        "state": "ca",
-        "zip": 95688,
-        "fulladdress": "218 Dobbins Vacaville, 95688",
-        "lat": 41.85, 
-        "lon": -87.65,
-        "lpd": 2956.19155,
-        "skylit": 0,
-        "autoOff": 4347.67746,
-        "kwhDesign": 23.62406249,
-        "kwhTarget": 17.30257364,
-        "kwhSavings": 6.321488848,
-        "areaControl": 0,
-        "powerAdjust": 541.134915,
-        "partOffOccSens": 0,
-        "primarySidelit": 301.6544181,
-        "secondarySidelit": 216.331149,
-        "2005": 35, "2006": 45, "2007": 31, "2008": 26, "2009": 14, "2010": 9, "2011": 15 
+      {
+        "type": "Feature", "id": 4,
+        "properties": {
+           "id": 4,
+          "name": "Vet ",
+          "type": "All other",
+          "address": "215 Dobbins",
+          "city": "Vacaville",
+          "state": "ca",
+          "zip": 95688,
+          "fulladdress": "218 Dobbins Vacaville, 95688",
+          "lat": 41.85, 
+          "lon": -87.65,
+          "lpd": 2956.19155,
+          "skylit": 0,
+          "autoOff": 4347.67746,
+          "kwhDesign": 23.62406249,
+          "kwhTarget": 17.30257364,
+          "kwhSavings": 6.321488848,
+          "areaControl": 0,
+          "powerAdjust": 541.134915,
+          "partOffOccSens": 0,
+          "primarySidelit": 301.6544181,
+          "secondarySidelit": 216.331149,
+          "2005": 35, "2006": 45, "2007": 31, "2008": 26, "2009": 14, "2010": 9, "2011": 15 
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -121.9890381,
+            38.3572342
+          ]
+        }
       },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -121.9890381,
-          38.3572342
-        ]
-      }
-    },
-    {
-      "type": "Feature", "id": 5,
-      "properties": {
-         "id": 5,
-        "name": "15 - Planet Fitness",
-        "type": "All other",
-        "address": "2525 N Texas St,",
-        "city": "Fairfield",
-        "state": "ca",
-        "zip": 94533,
-        "fulladdress": "2525 N Texas St, Fairfield, 94533",
-        "lat": 41.85, 
-        "lon": -87.65,
-        "lpd": 0,
-        "skylit": 0,
-        "autoOff": 7428.669638,
-        "kwhDesign": 52.44833839,
-        "kwhTarget": 35.19144456,
-        "kwhSavings": 17.25689383,
-        "areaControl": 0,
-        "powerAdjust": 11402.1428,
-        "partOffOccSens": 0,
-        "primarySidelit": 0,
-        "secondarySidelit": 49.85136,
-        "2005": 12, "2006": 31, "2007": 15, "2008": 22, "2009": 28, "2010": 38, "2011": 31
+      {
+        "type": "Feature", "id": 5,
+        "properties": {
+           "id": 5,
+          "name": "Fitness",
+          "type": "All other",
+          "address": "2565 N Texas St,",
+          "city": "Fairfield",
+          "state": "ca",
+          "zip": 94533,
+          "fulladdress": "2525 N Texas St, Fairfield, 94533",
+          "lat": 41.85, 
+          "lon": -87.65,
+          "lpd": 0,
+          "skylit": 0,
+          "autoOff": 7428.669638,
+          "kwhDesign": 52.44833839,
+          "kwhTarget": 35.19144456,
+          "kwhSavings": 17.25689383,
+          "areaControl": 0,
+          "powerAdjust": 11402.1428,
+          "partOffOccSens": 0,
+          "primarySidelit": 0,
+          "secondarySidelit": 49.85136,
+          "2005": 12, "2006": 31, "2007": 15, "2008": 22, "2009": 28, "2010": 38, "2011": 31
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -122.0359703,
+            38.2749076
+          ]
+        }
       },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -122.0359703,
-          38.2749076
-        ]
-      }
-    },
-    {
-      "type": "Feature", "id": 6,
-      "properties": {
-         "id": 6,
-        "name": "15 - Saks Fifth Avenue",
-        "type": "Retail and wholesale store",
-        "address": "1680 E Monte Vista Ave",
-        "city": "Vacaville",
-        "state": "ca",
-        "zip": 95688,
-        "fulladdress": "1680 E Monte Vista Ave Vacaville, 95688",
-        "lat": 41.85, 
-        "lon": -87.65,
-        "lpd": 0,
-        "skylit": 17989.24025,
-        "autoOff": 0,
-        "kwhDesign": 78.37253312,
-        "kwhTarget": 67.20509021,
-        "kwhSavings": 11.1674429,
-        "areaControl": 28.664532,
-        "powerAdjust": 353.161734,
-        "partOffOccSens": 0,
-        "primarySidelit": 0,
-        "secondarySidelit": 0,
-        "2005": 25, "2006": 50, "2007": 25, "2008": 25, "2009": 25, "2010": 25, "2011": 100
+      {
+        "type": "Feature", "id": 6,
+        "properties": {
+           "id": 6,
+          "name": "Avenue",
+          "type": "Retail and wholesale store",
+          "address": "1635 E Monte Vista Ave",
+          "city": "Vacaville",
+          "state": "ca",
+          "zip": 95688,
+          "fulladdress": "1680 E Monte Vista Ave Vacaville, 95688",
+          "lat": 41.85, 
+          "lon": -87.65,
+          "lpd": 0,
+          "skylit": 17989.24025,
+          "autoOff": 0,
+          "kwhDesign": 78.37253312,
+          "kwhTarget": 67.20509021,
+          "kwhSavings": 11.1674429,
+          "areaControl": 28.664532,
+          "powerAdjust": 353.161734,
+          "partOffOccSens": 0,
+          "primarySidelit": 0,
+          "secondarySidelit": 0,
+          "2005": 25, "2006": 50, "2007": 25, "2008": 25, "2009": 25, "2010": 25, "2011": 100
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -121.9591074,
+            38.3698599
+          ]
+        }
       },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -121.9591074,
-          38.3698599
-        ]
-      }
-    },
-    {
-      "type": "Feature", "id": 7,
-      "properties": {
-         "id": 7,
-        "name": "15 - Smart and Final",
-        "type": "Grocery store",
-        "address": "2525 N Texas St ",
-        "city": "Fairfield",
-        "state": "ca",
-        "zip": 94533,
-        "fulladdress": "2525 N Texas St  Fairfield, 94533",
-        "lat": 41.85, 
-        "lon": -87.65,
-        "lpd": 0,
-        "skylit": 0,
-        "autoOff": 0,
-        "kwhDesign": 70.48373809,
-        "kwhTarget": 68.97552769,
-        "kwhSavings": 1.508210399,
-        "areaControl": 0,
-        "powerAdjust": 1101.25702,
-        "partOffOccSens": 142.09768,
-        "primarySidelit": 446.3378807,
-        "secondarySidelit": 258.5681516,
-        "2005": 88, "2006": 46, "2007": 56, "2008": 15, "2009": 12, "2010": 25, "2011": 46
+      {
+        "type": "Feature", "id": 7,
+        "properties": {
+           "id": 7,
+          "name": "Final",
+          "type": "Grocery store",
+          "address": "2585 N Texas St ",
+          "city": "Fairfield",
+          "state": "ca",
+          "zip": 94533,
+          "fulladdress": "2525 N Texas St  Fairfield, 94533",
+          "lat": 41.85, 
+          "lon": -87.65,
+          "lpd": 0,
+          "skylit": 0,
+          "autoOff": 0,
+          "kwhDesign": 70.48373809,
+          "kwhTarget": 68.97552769,
+          "kwhSavings": 1.508210399,
+          "areaControl": 0,
+          "powerAdjust": 1101.25702,
+          "partOffOccSens": 142.09768,
+          "primarySidelit": 446.3378807,
+          "secondarySidelit": 258.5681516,
+          "2005": 88, "2006": 46, "2007": 56, "2008": 15, "2009": 12, "2010": 25, "2011": 46
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -122.0459703,
+            38.2749076
+          ]
+        }
       },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -122.0359703,
-          38.2749076
-        ]
+      {
+        "type": "Feature", "id": 8,
+        "properties": {
+           "id": 8,
+          "name": "Smiles",
+          "type": "Medical buildings and clinic",
+          "address": "2501 Nut Tree Rd",
+          "city": "Vacaville",
+          "state": "ca",
+          "zip": 95687,
+          "fulladdress": "2501 Nut Tree Rd Vacaville, 95687",
+          "lat": 41.85, 
+          "lon": -87.65,
+          "lpd": 0,
+          "skylit": 0,
+          "autoOff": 1473.65094,
+          "kwhDesign": 8.57486,
+          "kwhTarget": 5.538512013,
+          "kwhSavings": 3.036347987,
+          "areaControl": 0,
+          "powerAdjust": 1481.00082,
+          "partOffOccSens": 379.7438,
+          "primarySidelit": 113.5573935,
+          "secondarySidelit": 0,
+          "2005": 52, "2006": 51, "2007": 46, "2008": 68, "2009": 75, "2010": 85, "2011": 96
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [
+            -121.9537155,
+            38.3350313
+          ]
+        }
       }
-    },
-    {
-      "type": "Feature", "id": 8,
-      "properties": {
-         "id": 8,
-        "name": "15 - Unlimited Smiles AS 1510-0394",
-        "type": "Medical buildings and clinic",
-        "address": "\n2501 Nut Tree Rd",
-        "city": "Vacaville",
-        "state": "ca",
-        "zip": 95687,
-        "fulladdress": "\n2501 Nut Tree Rd Vacaville, 95687",
-        "lat": 41.85, 
-        "lon": -87.65,
-        "lpd": 0,
-        "skylit": 0,
-        "autoOff": 1473.65094,
-        "kwhDesign": 8.57486,
-        "kwhTarget": 5.538512013,
-        "kwhSavings": 3.036347987,
-        "areaControl": 0,
-        "powerAdjust": 1481.00082,
-        "partOffOccSens": 379.7438,
-        "primarySidelit": 113.5573935,
-        "secondarySidelit": 0,
-        "2005": 52, "2006": 51, "2007": 46, "2008": 68, "2009": 75, "2010": 85, "2011": 96
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          -121.9537155,
-          38.3350313
-        ]
-      }
-    }
-  ]
-};
+    ]
+  };
 
-  // This adds the data to the map
-  // map.on('load', function (e) {
-  //   // This is where your '.addLayer()' used to be, instead add only the source without styling a layer
-  //   map.addSource("places", {
-  //     "type": "geojson",
-  //     "data": buildings
-  //   });
-  //   // Initialize the list
-  //   buildLocationList(buildings);
- 
-  // });
-
-    map.on('load', function(e) {
-    // Add the data to your map as a layer
+   map.on('load', function(e) {
+   // Add the data to your map as a layer
     map.addLayer({
       id: 'locations',
       type: 'circle',
@@ -530,13 +455,106 @@
       //   'icon-allow-overlap': true,
       // },
       paint : {
-          'circle-color' : 'red',
-          'circle-radius' : 4,
+          'circle-color' : {
+            property: 'kwhSavings',
+            type: 'interval',
+            stops: colorList
+        },
+          'circle-stroke-color': 'orangered',
+          'circle-stroke-width' : 1,
+          // "circle-opacity": 1,
+          'circle-radius' : {
+            property: 'kwhSavings',
+            type: 'exponential',
+            stops:  [
+            [{ "zoom": 15, "value": 1 }, 10],
+            [{ "zoom": 15, "value": 10 }, 50],
+            [{ "zoom": 15, "value": 100 }, 100],
+            [{ "zoom": 17, "value": 1 }, 20],
+            [{ "zoom": 17, "value": 10 }, 60],
+            [{ "zoom": 17, "value": 100 }, 110],
+            [{ "zoom": 20, "value": 1 }, 30],
+            [{ "zoom": 20, "value": 10 }, 70],
+            [{ "zoom": 20, "value": 100 }, 120]
+        ]
+        },
           'circle-opacity' : 0.8
         }
+
     });
-    // Initialize the list
+  
+    //initialize search
+    // searchBuildings(buildings);
+    //Initialize legend
+    buildLegendList(buildings);
+    // Initialize building list
     buildLocationList(buildings);
+    // buildTotalsLegend(buildings);
+
+    // Add zoom and rotation controls to the map.
+    map.addControl(new mapboxgl.NavigationControl({
+      'position': 'top-left'
+    }));
+
+
+
+
+
+
+
+      // buildings.features.forEach(function(feature) {
+      //     var name = feature.properties['name'];
+      //     var layerID = 'p' + name;
+
+      //     // Add a layer for this symbol type if it hasn't been added already.
+      //     if (!map.getLayer(layerID)) {
+      //         map.addLayer({
+      //             "id": layerID,
+      //             "type": "symbol",
+      //             "source": "buildings",
+      //             "layout": {
+      //                 "icon-image": name + "-15",
+      //                 "icon-allow-overlap": true,
+      //                 "text-field": name,
+      //                 "text-font": ["Open Sans Bold", "Arial Unicode MS Bold"],
+      //                 "text-size": 11,
+      //                 "text-transform": "uppercase",
+      //                 "text-letter-spacing": 0.05,
+      //                 "text-offset": [0, 1.5]
+      //             },
+      //             "paint": {
+      //                 "text-color": "#202",
+      //                 "text-halo-color": "#fff",
+      //                 "text-halo-width": 2
+      //             },
+      //             "filter": ["==", "name", name]
+      //         });
+
+      //         layerIDs.push(layerID);
+      //     }
+      // });
+
+      // filterInput.addEventListener('keyup', function(e) {
+      //     // If the input value matches a layerID set
+      //     // it's visibility to 'visible' or else hide it.
+      //     var value = e.target.value.trim().toLowerCase();
+      //     layerIDs.forEach(function(layerID) {
+      //         map.setLayoutProperty(layerID, 'visibility',
+      //             layerID.indexOf(value) > -1 ? 'visible' : 'none');
+      //     });
+      // });
+
+
+
+
+
+
+
+
+
+
+
+
   }); //end map.onLoad
   
 
@@ -548,9 +566,9 @@
       if (features.length) {
         var clickedPoint = features[0];
         // 1. Fly to the point
-        flyToStore(clickedPoint);
+        flyToBuilding(clickedPoint);
 
-        // 2. Close all other popups and display popup for clicked store
+        // 2. Close all other popups and display popup for clicked building
         createPopUp(clickedPoint);
 
         // 3. Highlight listing in sidebar (and remove highlight for all other listings)
@@ -561,8 +579,8 @@
 
         var selectedFeature = clickedPoint.properties.address;
         
-        for (var i = 0; i < stores.features.length; i++ ) {
-          if (stores.features[i].properties.address === selectedFeature) {
+        for (var i = 0; i < buildings.features.length; i++ ) {
+          if (buildings.features[i].properties.address === selectedFeature) {
               selectedFeatureIndex = i;
           }
         }
@@ -574,7 +592,7 @@
     });
 
   
-  function flyToStore(currentFeature) {
+  function flyToBuilding(currentFeature) {
     map.flyTo({
         center: currentFeature.geometry.coordinates,
         zoom: 15
@@ -589,50 +607,64 @@
     var popup = new mapboxgl.Popup({closeOnClick: true})
           .setLngLat(currentFeature.geometry.coordinates)
           .setHTML('<h3>' + currentFeature.properties.name + '</h3>' 
-            + '<h4>KWH Savings</h4>' + 
-            '<h4>' + currentFeature.properties.kwhSavings + '</h4>')
+            + '<h4>kwh savings: ' + round(currentFeature.properties.kwhSavings) + '</h4>'
+            + '<h4>' + 'target: ' + round(currentFeature.properties.kwhTarget) + '</h4>'
+            + '<h4>' + 'design: ' + round(currentFeature.properties.kwhDesign) + '</h4>'
+            + '<h4>' + 'powerAdjust: ' + round(currentFeature.properties.powerAdjust) + '</h4>'
+            + '<h4>' + 'partOffOccSens: ' + round(currentFeature.properties.partOffOccSens) + '</h4>'
+            )
           .addTo(map);
   } //end createPopup
+
+
+  const round = (number, places=2) => {
+   const m = Math.pow(10, places);
+   return Math.floor(number * m) / m;
+  }
  
   function buildLocationList(data) {
     for (i = 0; i < data.features.length; i++) {
-      // Create an array of all the stores and their properties
+      // Create an array of all the buildings and their properties
       var currentFeature = data.features[i];
-      // Shorten data.feature.properties to just `prop` so we're not
-      // writing this long form over and over again.
+      // Shorten data.feature.properties to `prop`
       var prop = currentFeature.properties;
       // Select the listing container in the HTML
       var listings = document.getElementById('listings');
-      // Append a div with the class 'item' for each store 
+      // Append a div with the class 'item' for each building 
       var listing = listings.appendChild(document.createElement('div'));
       listing.className = 'item';
       listing.id = "listing-" + i;
 
-      // Create a new link with the class 'title' for each store 
-      // and fill it with the store address
+      // Create a new link with the class 'title' for each building 
+      // and fill it with the Building name
       var link = listing.appendChild(document.createElement('a'));
       link.href = '#';
       link.className = 'title';
       link.dataPosition = i;
-      link.innerHTML = prop.address;
+      link.innerText = prop.name;
 
-      // Create a new div with the class 'details' for each store 
+      var savings = listing.appendChild(document.createElement('div'));
+      // details.innerText = prop.city;
+      savings.innerText = 'kwh savings: ' + round(prop.kwhSavings);
+
+      // Create a new div with the class 'details' for each Building 
       // and fill it with the city and phone number
       var details = listing.appendChild(document.createElement('div'));
-      details.innerHTML = prop.city;
-      if (prop.phone) {
-        details.innerHTML += ' &middot; ' + prop.phoneFormatted;
-      }
+      // details.innerText = prop.city;
+      details.innerText = prop.city;
+
+  
+      
 
 
       link.addEventListener('click', function(e) {
-        // Update the currentFeature to the store associated with the clicked link
+        // Update the currentFeature to the Building associated with the clicked link
         var clickedListing = data.features[this.dataPosition];
 
         // 1. Fly to the point associated with the clicked link
-        flyToStore(clickedListing);
+        flyToBuilding(clickedListing);
 
-        // 2. Close all other popups and display popup for clicked store
+        // 2. Close all other popups and display popup for clicked building
         createPopUp(clickedListing);
 
         // 3. Highlight listing in sidebar (and remove highlight for all other listings)
@@ -645,8 +677,312 @@
 
       });
     }
+
+
+      var ctx = document.getElementById("myChart").getContext("2d");
+      var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ["office", "retail", "grocery", "school", "hospital", "univeristy"],
+            datasets: [{
+                label: 'kWh',
+                data: [round(prop.kwhSavings), 16, 19, 11, 15, 13],
+                backgroundColor: [
+                    '#bfd3e6',
+                    '#9ebcda',
+                    '#8c96c6',
+                    '#8856a7',
+                    '#810f7c',
+                    '#816996'
+                ],
+                borderColor: [
+                    '#627896',
+                    '#627896',
+                    '#627896',
+                    '#627896',
+                    '#627896',
+                    '#627896'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            title: {
+                       display: true,
+                       text: 'Co2 savings across building type'
+                   },
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero:true
+                    }
+                }]
+            }
+
+        }
+    }); //end myChart
+      // var line = ctx.setLineDash([5, 15]);
+
+      //    var gradient = ctx.createLinearGradient(0, 0, 0, 300);
+      //    gradient.addColorStop(0, '#627896');
+      //    gradient.addColorStop(1, 'rgba(40,175,250,0)');
+
+      //    var data = {
+      //        labels: ["January", "February", "March", "April", "May", "June", "July"],
+      //        datasets: [
+      //            {
+      //                label: "Before Code Cycle",
+      //                pointDot : false,
+      //                fillColor: gradient,
+      //                strokeColor: "#816996",
+      //                pointColor: "#FA4D10",
+      //                pointStrokeColor: "#816996",
+      //                pointHighlightFill: "#FA4D10",
+      //                pointHighlightStroke: "#816996",
+      //                data: [35, 49, 60, null, null, null, null]
+      //            },
+      //            {
+      //                label: "After Code Cycle",
+      //                fillColor: "rgba(0,0,0,0)",
+      //                strokeColor: "rgba(255,255,255,.9)",
+      //                pointColor: "#FA4D10",
+      //                pointStrokeColor: "rgba(255,255,255,.9)",
+      //                pointHighlightFill: "#FA4D10",
+      //                pointHighlightStroke: "#816996",
+      //                data: [null, null, null, 76, 86, 57, 90]
+      //            }
+      //        ]
+      //    };
+
+      //    var options = {};
+
+      //    var myLineChart = new Chart(ctx, { type: 'bar',
+      //   data: data, options: options});
+      //    console.log(myLineChart);
+
   } //end buildLocationList
+    
+  function calcPropRadius(attributeValue) {
+
+    var scaleFactor = 45,
+      area = attributeValue * scaleFactor;
+
+    //determine the area (instead of radius) of proportional circle 
+    return Math.sqrt(area/Math.PI);
+
+  } // end calcPropRadius
+
   
+
+
+  function buildLegendList(data) {
+    // for (i = 0; i < data.features.length; i++) {
+    //   // Create an array of all the buildings and their properties
+    //   var currentFeature = data.features[i];
+    //   // Shorten data.feature.properties to just `prop` so we're not
+    //   // writing this long form over and over again.
+    //   var prop = currentFeature.properties;
+    // }
+  // define layer names
+    var layers = ['0-10', '10-20', '20-50', '50-100', '100-200', '200-500', '500-1000', '1000+'];
+    var colors = ['#FFEDA0', '#FED976', '#FEB24C', '#FD8D3C', '#FC4E2A', '#E31A1C', '#BD0026', '#800026'];
+
+    // [1.614, '#edf8fb'],
+    //   [4.132, '#ccece6'],
+    //   [8.056, '#99d8c9'],
+    //   [13.919, '#66c2a4'],
+    //   [20.464, '#41ae76'],
+    //   [34.615, '#238b45']
+    // create legend
+    const arrayMax = [];
+    const arrayMin = [];
+    const arrayItems = [];
+    var lastRadius = 0;
+    var  currentRadius;
+    var  margin;
+    // const classes = [roundNumber(min), roundNumber((max-min)/2), roundNumber(max)];
+    // const maxNumber = Math.max(...arrayMax);
+    // const minNumber = Math.min(...arrayMax);
+    // console.log(maxNumber);
+    for (i=0; i<layers.length; i++) {
+        var layer = layers[i];
+        // console.log(colorList);
+        // var properties = data.features[feature].properties;
+
+        for (var color in colorList) {
+          // console.log(colorList[color][1]);
+          var color = colorList[color][1];
+          // console.log(color);
+       }
+
+        // var color = colorList[0][i];
+        var item = document.createElement('div');
+        
+        var key = document.createElement('span');
+        key.className = 'legend-key';
+        key.style.backgroundColor = color;
+
+        // key.style.setAttribute("style","width:50px");
+        // key.setAttribute("style","width:100px");
+        var currentFeature = data.features;
+        item.id = currentFeature[i].properties.kwhSavings;
+        // key.style.width=(currentFeature[i].properties.kwhSavings * 7) +'px';
+        // key.style.height=(currentFeature[i].properties.kwhSavings * 7) +'px';
+        arrayMax.push(currentFeature[i].properties.kwhSavings);
+        arrayItems.push(item);
+        // key.style.width=(arrayMax[i] * 7) +'px';
+        // key.style.height=(arrayMax[i] * 7) +'px';
+        // console.log(Math.max(...currentFeature[i].properties.kwhSavings));
+        // console.log(arrayMaxMin);
+        // arrayMax.sort(function(a, b) {
+        //   return a - b;
+        // });
+        // console.log(Math.max(arrayMaxMin));
+        // console.log(Math.max(...arrayMaxMin));
+        var sortedValues = arrayMax.sort(function(a, b) {
+          return a - b;
+        });
+        arrayItems.sort(function(a, b) {
+          return a - b;
+        });
+        
+        
+        currentRadius = calcPropRadius(sortedValues[i]);
+        
+        // console.log(currentRadius);
+
+        margin = -currentRadius - lastRadius - 2;
+
+        key.style.width=(currentRadius*2) +'px';
+        key.style.height=(currentRadius*2) +'px';
+        key.style.marginLeft = margin +'px';
+
+      
+
+        var value = document.createElement('span');
+        // console.log(sortedValues);
+        // console.log(arrayItems);
+        // key.style.width=(currentFeature[i].properties.kwhSavings) +'px';
+        // key.style.height=(currentFeature[i].properties.kwhSavings) +'px';
+        // value.innerText = round(currentFeature[i].properties.kwhSavings);
+        // value.innerText = round(item.id);
+
+        // item.appendChild(key);
+        // item.appendChild(value);
+
+        lastRadius = currentRadius;
+
+        legend.appendChild(item);
+    }
+
+    function roundNumber(inNumber) {
+
+          return (Math.round(inNumber/10) * 10);
+    }
+
+    var maxNumber = Math.max(...arrayMax);
+    var minNumber = Math.min(...arrayMax);
+    // console.log(minNumber);
+    // console.log(maxNumber);
+    arrayMax.sort(function(a, b) {
+          return a - b;
+        });
+    // console.log(key);
+     arrayItems.sort(function(a, b) {
+          return a - b;
+        })
+     // console.log(arrayItems);
+     // console.log(sortedValues);
+     var total = sortedValues.reduce(function(sum, value) {
+       return sum + value;
+     }, 0);
+     // console.log(total);
+     var roundedTotal = round(total);
+
+     displayTotal = document.getElementById("totalSavings");
+
+     displayTotal.append(roundedTotal);
+
+    // key.style.width=(40) +'px';
+    //     key.style.height=(40) +'px';
+
+  } //end buildLegendList
+
+  // document.getElementById('zoomto').addEventListener('click', function() {
+         
+  //         // Geographic coordinates of the LineString
+  //         var coordinates = buildings.features[0].geometry.coordinates;
+  //         console.log(coordinates);
+
+  //         // Pass the first coordinates in the LineString to `lngLatBounds` &
+  //         // wrap each coordinate pair in `extend` to include them in the bounds
+  //         // result. A variation of this technique could be applied to zooming
+  //         // to the bounds of multiple Points or Polygon geomteries - it just
+  //         // requires wrapping all the coordinates with the extend method.
+  //         var bounds = coordinates.reduce(function(bounds, coord) {
+  //             return bounds.extend(coord);
+  //         }, new mapboxgl.LngLatBounds(coordinates[0], coordinates[0]));
+
+  //         map.fitBounds(bounds, {
+  //             padding: 20
+  //         });
+  //     });
+  
+
+
+
+
+  // $('#search').keyup(search);
+
+  // var csvLayer = omnivore.GeoJSON('data/code_cycle_faux.geojson', null, L.mapbox.featureLayer())
+  //     .addTo(map);
+
+  // function searchBuildings(data) {
+  //     // get the value of the search input field
+  //     var searchString = $('#search').val().toLowerCase();
+
+  //     console.log(buildings);
+  //     csvLayer.setFilter(showBuilding);
+  //     // buildings.setFilter(showBuilding);
+
+
+  //     // here we're simply comparing the 'state' property of each marker
+  //     // to the search string, seeing whether the former contains the latter.
+  //     function showBuilding(feature) {
+  //         return feature.properties.name
+  //             .toLowerCase()
+  //             .indexOf(searchString) !== -1;
+  //     }
+  // }
+
+
+
+
+  // new Chartist.Bar('.ct-chart', {
+  //   labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+  //   series: [
+  //     [800000, 1200000, 1400000, 1300000],
+  //     [200000, 400000, 500000, 300000],
+  //     [100000, 2000, 4000, 600000]
+  //   ]
+  // }, {
+  //   stackBars: true,
+  //   axisY: {
+  //     labelInterpolationFnc: function(value) {
+  //       return (value / 1000) + 'k';
+  //     }
+  //   }
+  // }).on('draw', function(data) {
+  //   if(data.type === 'bar') {
+  //     data.element.attr({
+  //       style: 'stroke-width: 30px'
+  //     });
+  //   }
+  // });
+
+
+
+
 
 
     </script>

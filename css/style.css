@@ -78,17 +78,17 @@
          top: 42px;
          z-index: 1000;
          left: 260px;
-         /*width: 250px;*/
+         width: 380px;
          /*height: 750px;*/
-         height: 100vh;
+         /*height: 100vh;*/
          margin-left: -250px;
          overflow-y: auto;
          background: rgba(255, 255, 255, 0.79);
        }
        .chart-container {
         position: relative; 
-        /*height:40vh; */
-        /*width:80vw"*/
+        height:192px; 
+        width:100%;
        }
        .pad2 {
          padding:20px;
@@ -136,12 +136,22 @@
        }
 
        .listings {
-         height:100%;
+         position: relative;
+         top: 310px;
          overflow:auto;
-         padding-bottom:30px;
+         /*padding-bottom:30px;*/
+         /*display: table-cell;*/
+         border-radius: 3px;
+         z-index: 1000;
+         left: 260px;
+         width: 380px;
+         margin-left: -250px;
+         overflow-y: auto;
+         background: rgba(255, 255, 255, 0.79);
        }
 
        .listings .item {
+         top: 100px;
          display:block;
          border-bottom:1px solid #eee;
          padding:10px;
